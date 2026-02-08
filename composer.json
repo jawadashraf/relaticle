@@ -49,6 +49,7 @@
         "cweagans/composer-patches": "*",
         "driftingly/rector-laravel": "^2.0",
         "fakerphp/faker": "^1.23",
+        "filament/blueprint": "^1.1",
         "itsgoingd/clockwork": "^5.3",
         "larastan/larastan": "^3.0",
         "laravel/boost": "^1.0",
@@ -147,5 +148,10 @@
         }
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "repositories": [{
+        "name": "filament",
+        "type": "composer",
+        "url": "https://packages.filamentphp.com/composer"
+    }]
 }

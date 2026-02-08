@@ -641,4 +641,15 @@ Authenticate before testing panel functionality. Filament uses Livewire, so use 
 #### Prism Relay (Model Context Protocol Integration) (https://github.com/prism-php/relay)
 
 #### Prism Bedrock (AWS Bedrock Provider) (https://github.com/prism-php/bedrock)
+
+=== filament/blueprint rules ===
+
+## Filament Blueprint
+
+You are writing Filament v4 implementation plans. Plans must be specific enough
+that an implementing agent can write code without making decisions.
+
+**Start here**: Read
+`/vendor/filament/blueprint/resources/markdown/planning/overview.md` for plan format,
+required sections, and what to clarify with the user before planning.
 </laravel-boost-guidelines>
