@@ -42,8 +42,8 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Laravel\Jetstream\Features;
-use Relaticle\CustomFields\CustomFieldsPlugin;
 use Openplain\FilamentShadcnTheme\Color;
+use Relaticle\CustomFields\CustomFieldsPlugin;
 
 final class AppPanelProvider extends PanelProvider
 {
@@ -104,7 +104,7 @@ final class AppPanelProvider extends PanelProvider
                 //     950 => 'oklch(0.283 0.135 291.089)',
                 //     'DEFAULT' => 'oklch(0.541 0.247 293.009)',
                 // ],
-                'primary' => Color::Default, 
+                'primary' => Color::Default,
             ])
             ->viteTheme('resources/css/filament/app/theme.css')
             ->font('Inter')

@@ -63,7 +63,7 @@
         "pestphp/pest-plugin-livewire": "^4.0",
         "pestphp/pest-plugin-type-coverage": "^4.0",
         "phpstan/phpstan": "2.1.33",
-        "rector/rector": "^2.0",
+        "rector/rector": "^2.3",
         "spatie/laravel-horizon-watcher": "^1.1"
     },
     "autoload": {
@@ -109,7 +109,7 @@
         "lint": "rector && pint --parallel",
         "test:lint": "pint --test",
         "test:refactor": "rector --dry-run",
-        "test:types": "phpstan analyse",
+        "test:types": "phpstan analyse --memory-limit=2G",
         "test:arch": "pest --filter=arch",
         "test:type-coverage": "pest --type-coverage --min=99.9",
         "test:coverage": "pest --coverage --min=80",
@@ -149,9 +149,11 @@
     },
     "minimum-stability": "stable",
     "prefer-stable": true,
-    "repositories": [{
-        "name": "filament",
-        "type": "composer",
-        "url": "https://packages.filamentphp.com/composer"
-    }]
+    "repositories": [
+        {
+            "name": "filament",
+            "type": "composer",
+            "url": "https://packages.filamentphp.com/composer"
+        }
+    ]
 }

@@ -19,9 +19,22 @@ final class EnquiryForm
     {
         return $schema
             ->components([
-                Section::make('Caller Identification')
+                // Section::make('Caller Identification')
+                //     ->schema([
+                //         Select::make('people_id')
+                //             ->relationship('people', 'name')
+                //             ->searchable()
+                //             ->preload()
+                //             ->createOptionForm([
+                //                 TextInput::make('name')
+                //                     ->required(),
+                //             ])
+                //             ->label('Caller'),
+                //     ]),
+
+                Section::make('Enquiry Details')
                     ->schema([
-                        Select::make('people_id')
+                         Select::make('people_id')
                             ->relationship('people', 'name')
                             ->searchable()
                             ->preload()
@@ -29,11 +42,7 @@ final class EnquiryForm
                                 TextInput::make('name')
                                     ->required(),
                             ])
-                            ->label('Caller'),
-                    ]),
-
-                Section::make('Enquiry Details')
-                    ->schema([
+                            ->label('Caller')->columnSpanFull(),
                         Select::make('category')
                             ->options(EnquiryCategory::class)
                             ->native(false)
@@ -68,8 +77,7 @@ final class EnquiryForm
                             ->default(auth()->user()?->id)
                             ->required()
                             ->label('Staff Member'),
-                    ])
-                    ->columns(3),
+                    ]),
             ]);
     }
 }

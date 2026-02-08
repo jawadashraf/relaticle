@@ -12,7 +12,7 @@ final class EnquiryPolicy
     /**
      * Determine whether the user can view any models.
      */
-    public function viewAny(User $user): bool
+    public function viewAny(): bool
     {
         return true;
     }
@@ -25,15 +25,17 @@ final class EnquiryPolicy
         if ($user->id === $enquiry->user_id) {
             return true;
         }
+        if ($user->hasTeamRole($user->currentTeam, 'admin')) {
+            return true;
+        }
 
-        return $user->hasTeamRole($user->currentTeam, 'admin') ||
-               $user->hasTeamRole($user->currentTeam, 'safeguarding-lead');
+        return $user->hasTeamRole($user->currentTeam, 'safeguarding-lead');
     }
 
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user): bool
+    public function create(): bool
     {
         return true;
     }
@@ -46,18 +48,23 @@ final class EnquiryPolicy
         if ($user->id === $enquiry->user_id) {
             return true;
         }
+        if ($user->hasTeamRole($user->currentTeam, 'admin')) {
+            return true;
+        }
 
-        return $user->hasTeamRole($user->currentTeam, 'admin') ||
-               $user->hasTeamRole($user->currentTeam, 'safeguarding-lead');
+        return $user->hasTeamRole($user->currentTeam, 'safeguarding-lead');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Enquiry $enquiry): bool
+    public function delete(User $user): bool
     {
-        return $user->hasTeamRole($user->currentTeam, 'admin') ||
-               $user->hasTeamRole($user->currentTeam, 'safeguarding-lead');
+        if ($user->hasTeamRole($user->currentTeam, 'admin')) {
+            return true;
+        }
+
+        return $user->hasTeamRole($user->currentTeam, 'safeguarding-lead');
     }
 
     /**
@@ -65,17 +72,23 @@ final class EnquiryPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->hasTeamRole($user->currentTeam, 'admin') ||
-               $user->hasTeamRole($user->currentTeam, 'safeguarding-lead');
+        if ($user->hasTeamRole($user->currentTeam, 'admin')) {
+            return true;
+        }
+
+        return $user->hasTeamRole($user->currentTeam, 'safeguarding-lead');
     }
 
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, Enquiry $enquiry): bool
+    public function restore(User $user): bool
     {
-        return $user->hasTeamRole($user->currentTeam, 'admin') ||
-               $user->hasTeamRole($user->currentTeam, 'safeguarding-lead');
+        if ($user->hasTeamRole($user->currentTeam, 'admin')) {
+            return true;
+        }
+
+        return $user->hasTeamRole($user->currentTeam, 'safeguarding-lead');
     }
 
     /**
@@ -83,17 +96,23 @@ final class EnquiryPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->hasTeamRole($user->currentTeam, 'admin') ||
-               $user->hasTeamRole($user->currentTeam, 'safeguarding-lead');
+        if ($user->hasTeamRole($user->currentTeam, 'admin')) {
+            return true;
+        }
+
+        return $user->hasTeamRole($user->currentTeam, 'safeguarding-lead');
     }
 
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Enquiry $enquiry): bool
+    public function forceDelete(User $user): bool
     {
-        return $user->hasTeamRole($user->currentTeam, 'admin') ||
-               $user->hasTeamRole($user->currentTeam, 'safeguarding-lead');
+        if ($user->hasTeamRole($user->currentTeam, 'admin')) {
+            return true;
+        }
+
+        return $user->hasTeamRole($user->currentTeam, 'safeguarding-lead');
     }
 
     /**
@@ -101,7 +120,10 @@ final class EnquiryPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->hasTeamRole($user->currentTeam, 'admin') ||
-               $user->hasTeamRole($user->currentTeam, 'safeguarding-lead');
+        if ($user->hasTeamRole($user->currentTeam, 'admin')) {
+            return true;
+        }
+
+        return $user->hasTeamRole($user->currentTeam, 'safeguarding-lead');
     }
 }

@@ -17,6 +17,7 @@ final class Enquiry extends Model
 
     /** @use HasFactory<\Database\Factories\EnquiryFactory> */
     use HasFactory;
+
     use HasTeam;
 
     protected $fillable = [
