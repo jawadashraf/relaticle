@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\EnquiryCategory;
+use App\Enums\EnquiryStatus;
 use App\Models\Concerns\HasCreator;
 use App\Models\Concerns\HasTeam;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -34,15 +35,24 @@ final class Enquiry extends Model
         'occurred_at',
         'team_id',
         'creator_id',
+        'status',
+        'converted_at',
     ];
 
     protected function casts(): array
     {
         return [
             'category' => EnquiryCategory::class,
+            'status' => EnquiryStatus::class,
             'safeguarding_flags' => 'boolean',
             'occurred_at' => 'datetime',
+            'converted_at' => 'datetime',
         ];
+    }
+
+    public function canBeConverted(): bool
+    {
+        return $this->status === EnquiryStatus::OPEN && $this->people_id !== null;
     }
 
     /**

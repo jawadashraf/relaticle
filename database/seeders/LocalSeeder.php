@@ -34,15 +34,8 @@ final class LocalSeeder extends Seeder
             ]);
 
         $teamId = $user->personalTeam()->id;
-        //
-        //        User::factory()
-        //            ->withPersonalTeam()
-        //            ->create([
-        //                'name' => 'Test User',
-        //                'email' => 'test@example.com',
-        //            ]);
-        //
-        //        // Create 10 Test Users
+
+        // Create 10 Test Users
         User::factory()
             ->count(10)
             ->create()

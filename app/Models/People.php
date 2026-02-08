@@ -13,6 +13,7 @@ use App\Observers\PeopleObserver;
 use App\Services\AvatarService;
 use Database\Factories\PeopleFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -48,6 +49,7 @@ final class People extends Model implements HasCustomFields
     protected $fillable = [
         'name',
         'creation_source',
+        'is_service_user',
     ];
 
     /**
@@ -66,7 +68,17 @@ final class People extends Model implements HasCustomFields
     {
         return [
             'creation_source' => CreationSource::class,
+            'is_service_user' => 'boolean',
         ];
+    }
+
+    /**
+     * @param  Builder<People>  $query
+     * @return Builder<People>
+     */
+    public function scopeServiceUsers(Builder $query): Builder
+    {
+        return $query->where('is_service_user', true);
     }
 
     public function getAvatarAttribute(): string

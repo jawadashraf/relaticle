@@ -126,4 +126,12 @@ final class EnquiryPolicy
 
         return $user->hasTeamRole($user->currentTeam, 'safeguarding-lead');
     }
+
+    /**
+     * Determine whether the user can convert the enquiry to a service user.
+     */
+    public function convertToServiceUser(User $user, Enquiry $enquiry): bool
+    {
+        return $this->update($user, $enquiry);
+    }
 }

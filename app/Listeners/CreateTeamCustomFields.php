@@ -114,7 +114,7 @@ final readonly class CreateTeamCustomFields
         // Add options for select-type fields if available
         $options = $enum->getOptions();
         if ($options !== null) {
-            $migrator->options($options);
+            $migrator->options(array_values($options));
         }
 
         // Create the field in the database

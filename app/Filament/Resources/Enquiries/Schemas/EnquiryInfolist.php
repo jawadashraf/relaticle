@@ -26,6 +26,13 @@ final class EnquiryInfolist
                         TextEntry::make('occurred_at')
                             ->dateTime(),
 
+                        TextEntry::make('status')
+                            ->badge(),
+
+                        TextEntry::make('converted_at')
+                            ->dateTime()
+                            ->visible(fn ($record) => $record?->converted_at !== null),
+
                         IconEntry::make('safeguarding_flags')
                             ->boolean()
                             ->label('Safeguarding'),

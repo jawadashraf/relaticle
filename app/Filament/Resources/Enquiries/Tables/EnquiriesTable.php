@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Enquiries\Tables;
 
 use App\Enums\EnquiryCategory;
+use App\Enums\EnquiryStatus;
+use App\Filament\Resources\Enquiries\Actions\ConvertToServiceUserAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -42,6 +44,11 @@ final class EnquiriesTable
 
                 TextColumn::make('occurred_at')
                     ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                TextColumn::make('status')
+                    ->badge()
                     ->sortable(),
             ])
             ->filters([
@@ -51,10 +58,14 @@ final class EnquiriesTable
                 SelectFilter::make('user_id')
                     ->relationship('user', 'name')
                     ->label('Staff Member'),
+
+                SelectFilter::make('status')
+                    ->options(EnquiryStatus::class),
             ])
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
+                ConvertToServiceUserAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
