@@ -50,8 +50,12 @@ final class People extends Model implements HasCustomFieldsContract
         'name',
         'creation_source',
         'is_service_user',
-        'custom_fields',
     ];
+
+    /**
+     * @var array<string, mixed>|null
+     */
+    public ?array $custom_fields = null;
 
     /**
      * @var array<string, mixed>
@@ -70,7 +74,6 @@ final class People extends Model implements HasCustomFieldsContract
         return [
             'creation_source' => CreationSource::class,
             'is_service_user' => 'boolean',
-            'custom_fields' => 'array',
         ];
     }
 

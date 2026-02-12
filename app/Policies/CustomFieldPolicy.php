@@ -15,17 +15,17 @@ final readonly class CustomFieldPolicy
 
     public function viewAny(User $user): bool
     {
-        return $user->hasVerifiedEmail() && $user->currentTeam !== null;
+        return $user->hasVerifiedEmail();
     }
 
     public function view(User $user, CustomField $customField): bool
     {
-        return $user->belongsToTeam($customField->team);
+        return true;
     }
 
     public function create(User $user): bool
     {
-        return $user->hasVerifiedEmail() && $user->currentTeam !== null;
+        return $user->hasVerifiedEmail();
     }
 
     public function update(User $user, CustomField $customField): bool
@@ -40,7 +40,7 @@ final readonly class CustomFieldPolicy
 
     public function deleteAny(User $user): bool
     {
-        return $user->hasVerifiedEmail() && $user->currentTeam !== null;
+        return $user->hasVerifiedEmail();
     }
 
     public function restore(User $user, CustomField $customField): bool
@@ -50,16 +50,16 @@ final readonly class CustomFieldPolicy
 
     public function restoreAny(User $user): bool
     {
-        return $user->hasVerifiedEmail() && $user->currentTeam !== null;
+        return $user->hasVerifiedEmail();
     }
 
     public function forceDelete(User $user, CustomField $customField): bool
     {
-        return $user->hasTeamRole(Filament::getTenant(), 'admin');
+        return $user->currentTeam && $user->hasTeamRole($user->currentTeam, 'admin');
     }
 
     public function forceDeleteAny(User $user): bool
     {
-        return $user->hasTeamRole(Filament::getTenant(), 'admin');
+        return $user->currentTeam && $user->hasTeamRole($user->currentTeam, 'admin');
     }
 }

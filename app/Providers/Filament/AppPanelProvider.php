@@ -11,7 +11,6 @@ use App\Filament\Pages\CreateTeam;
 use App\Filament\Pages\EditProfile;
 use App\Filament\Pages\EditTeam;
 use App\Filament\Resources\CompanyResource;
-use App\Http\Middleware\ApplyTenantScopes;
 use App\Listeners\SwitchTeam;
 use App\Models\Team;
 use Exception;
@@ -147,12 +146,6 @@ final class AppPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->tenantMiddleware(
-                [
-                    ApplyTenantScopes::class,
-                ],
-                isPersistent: true
-            )
             ->renderHook(
                 PanelsRenderHook::AUTH_LOGIN_FORM_BEFORE,
                 fn (): string => Blade::render('@env(\'local\')<x-login-link email="manuk.minasyan1@gmail.com" redirect-url="'.url('/').'" />@endenv'),
@@ -181,22 +174,12 @@ final class AppPanelProvider extends PanelProvider
             ]);
         }
 
-        if (Features::hasTeamFeatures()) {
-            $panel
-                ->tenant(Team::class, ownershipRelationship: 'team')
-                ->tenantRegistration(CreateTeam::class)
-                ->tenantProfile(EditTeam::class);
-        }
 
         return $panel;
     }
 
     public function shouldRegisterMenuItem(): bool
     {
-        $hasVerifiedEmail = Auth::user()?->hasVerifiedEmail();
-
-        return Filament::hasTenancy()
-            ? $hasVerifiedEmail && Filament::getTenant()
-            : $hasVerifiedEmail;
+        return Auth::user()?->hasVerifiedEmail() ?? false;
     }
 }

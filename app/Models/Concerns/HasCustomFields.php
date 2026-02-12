@@ -32,11 +32,6 @@ trait HasCustomFields
         return $valueRecord?->{$valueColumn};
     }
 
-    /**
-     * Save multiple custom fields at once.
-     *
-     * @param  array<string, mixed>  $values  Array of code => value
-     */
     public function saveCustomFields(array $values, mixed $tenant = null): void
     {
         foreach ($values as $code => $value) {
@@ -75,10 +70,10 @@ trait HasCustomFields
     protected function getValueColumnForType(string $type): string
     {
         return match ($type) {
-            'text', 'string', 'url', 'email' => 'string_value',
+            'text', 'string', 'url', 'email', 'select' => 'string_value',
             'longText', 'richtext', 'textarea' => 'text_value',
             'boolean', 'toggle' => 'boolean_value',
-            'integer', 'number', 'select' => 'integer_value',
+            'integer', 'number' => 'integer_value',
             'float', 'decimal' => 'float_value',
             'date' => 'date_value',
             'datetime' => 'datetime_value',

@@ -19,8 +19,11 @@ use Illuminate\Support\Facades\Event;
 pest()->extend(Tests\TestCase::class)
     ->use(RefreshDatabase::class)
     ->beforeEach(function () {
-        // Globally disable events to prevent demo record creation during tests
-        Event::fake();
+        // Globally disable TeamCreated event to prevent demo record creation during tests
+        // while allowing model observers to function.
+        Event::fake([
+            \Laravel\Jetstream\Events\TeamCreated::class,
+        ]);
     })
     ->in('Feature', 'Unit');
 

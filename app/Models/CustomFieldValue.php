@@ -13,6 +13,11 @@ final class CustomFieldValue extends Model
 {
     use HasTeam;
 
+    /**
+     * @var bool
+     */
+    public $timestamps = false;
+
     protected $fillable = [
         'team_id',
         'entity_type',
@@ -40,7 +45,7 @@ final class CustomFieldValue extends Model
         ];
     }
 
-    public function field(): BelongsTo
+    public function customField(): BelongsTo
     {
         return $this->belongsTo(CustomField::class, 'custom_field_id');
     }

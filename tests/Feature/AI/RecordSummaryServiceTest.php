@@ -20,7 +20,6 @@ use Prism\Prism\ValueObjects\Usage;
 beforeEach(function () {
     $this->user = User::factory()->withPersonalTeam()->create();
     $this->actingAs($this->user);
-    Filament::setTenant($this->user->personalTeam());
 });
 
 describe('RecordContextBuilder', function () {

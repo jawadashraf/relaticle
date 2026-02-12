@@ -30,25 +30,22 @@ test('user belongs to many tasks', function () {
         ->and($user->tasks->first()->id)->toBe($task->id);
 });
 
-test('user can access tenants', function () {
+test('user can be member of teams', function () {
     $user = User::factory()->create();
     $team = Team::factory()->create(['user_id' => $user->id]);
-    $user->ownedTeams()->save($team);
+    $user->teams()->attach($team);
 
-    $tenants = $user->getTenants(app(\Filament\Panel::class)->id('app'));
-
-    expect($tenants->count())->toBe(1)
-        ->and($tenants->first()->id)->toBe($team->id);
+    expect($user->teams->count())->toBe(1)
+        ->and($user->teams->first()->id)->toBe($team->id);
 });
 
-test('user can access tenant', function () {
+test('user can own teams', function () {
     $user = User::factory()->create();
     $team = Team::factory()->create(['user_id' => $user->id]);
     $user->ownedTeams()->save($team);
-    $user->currentTeam()->associate($team);
-    $user->save();
 
-    expect($user->canAccessTenant($team))->toBeTrue();
+    expect($user->ownedTeams->count())->toBe(1)
+        ->and($user->ownedTeams->first()->id)->toBe($team->id);
 });
 
 test('user has avatar', function () {

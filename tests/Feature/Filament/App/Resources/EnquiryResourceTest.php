@@ -15,7 +15,6 @@ use function Pest\Livewire\livewire;
 beforeEach(function () {
     $this->user = User::factory()->withPersonalTeam()->create();
     $this->actingAs($this->user);
-    Filament::setTenant($this->user->personalTeam());
 });
 
 it('can render the index page', function (): void {
@@ -24,7 +23,7 @@ it('can render the index page', function (): void {
 });
 
 it('can render the view page', function (): void {
-    $record = Enquiry::factory()->for($this->user->personalTeam())->create();
+    $record = Enquiry::factory()->create();
 
     livewire(ViewEnquiry::class, ['record' => $record->getKey()])
         ->assertOk();
@@ -36,7 +35,7 @@ it('can render the create page', function (): void {
 });
 
 it('can render the edit page', function (): void {
-    $record = Enquiry::factory()->for($this->user->personalTeam())->create([
+    $record = Enquiry::factory()->create([
         'user_id' => $this->user->id,
     ]);
 

@@ -9,8 +9,6 @@ use Database\Factories\UserFactory;
 use Exception;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
-use Filament\Models\Contracts\HasDefaultTenant;
-use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -36,7 +34,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string|null $two_factor_recovery_codes
  * @property string|null $two_factor_secret
  */
-final class User extends Authenticatable implements FilamentUser, HasAvatar, HasDefaultTenant, HasTenants, MustVerifyEmail
+final class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerifyEmail
 {
     use HasApiTokens;
 
@@ -117,29 +115,11 @@ final class User extends Authenticatable implements FilamentUser, HasAvatar, Has
         return $this->hasMany(Opportunity::class, 'creator_id');
     }
 
-    public function getDefaultTenant(Panel $panel): ?Model
-    {
-        return $this->currentTeam;
-    }
-
     /**
      * @throws Exception
      */
     public function canAccessPanel(Panel $panel): bool
     {
         return $panel->getId() === 'app';
-    }
-
-    /**
-     * @return Collection<int, Team>
-     */
-    public function getTenants(Panel $panel): Collection
-    {
-        return $this->allTeams();
-    }
-
-    public function canAccessTenant(Model $tenant): bool
-    {
-        return $this->belongsToTeam($tenant);
     }
 }

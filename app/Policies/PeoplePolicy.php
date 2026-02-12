@@ -15,17 +15,17 @@ final readonly class PeoplePolicy
 
     public function viewAny(User $user): bool
     {
-        return $user->hasVerifiedEmail() && $user->currentTeam !== null;
+        return $user->hasVerifiedEmail();
     }
 
     public function view(User $user, People $people): bool
     {
-        return $user->belongsToTeam($people->team);
+        return true;
     }
 
     public function create(User $user): bool
     {
-        return $user->hasVerifiedEmail() && $user->currentTeam !== null;
+        return $user->hasVerifiedEmail();
     }
 
     public function update(User $user, People $people): bool
@@ -40,7 +40,7 @@ final readonly class PeoplePolicy
 
     public function deleteAny(User $user): bool
     {
-        return $user->hasVerifiedEmail() && $user->currentTeam !== null;
+        return $user->hasVerifiedEmail();
     }
 
     public function restore(User $user, People $people): bool
@@ -50,16 +50,16 @@ final readonly class PeoplePolicy
 
     public function restoreAny(User $user): bool
     {
-        return $user->hasVerifiedEmail() && $user->currentTeam !== null;
+        return $user->hasVerifiedEmail();
     }
 
     public function forceDelete(User $user, People $people): bool
     {
-        return $user->hasTeamRole($people->team, 'admin');
+        return $user->currentTeam && $user->hasTeamRole($user->currentTeam, 'admin');
     }
 
     public function forceDeleteAny(User $user): bool
     {
-        return $user->hasTeamRole(Filament::getTenant(), 'admin');
+        return $user->currentTeam && $user->hasTeamRole($user->currentTeam, 'admin');
     }
 }

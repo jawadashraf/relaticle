@@ -15,17 +15,17 @@ final readonly class NotePolicy
 
     public function viewAny(User $user): bool
     {
-        return $user->hasVerifiedEmail() && $user->currentTeam !== null;
+        return $user->hasVerifiedEmail();
     }
 
     public function view(User $user, Note $note): bool
     {
-        return $user->belongsToTeam($note->team);
+        return true;
     }
 
     public function create(User $user): bool
     {
-        return $user->hasVerifiedEmail() && $user->currentTeam !== null;
+        return $user->hasVerifiedEmail();
     }
 
     public function update(User $user, Note $note): bool
@@ -40,7 +40,7 @@ final readonly class NotePolicy
 
     public function deleteAny(User $user): bool
     {
-        return $user->hasVerifiedEmail() && $user->currentTeam !== null;
+        return $user->hasVerifiedEmail();
     }
 
     public function restore(User $user, Note $note): bool
@@ -50,16 +50,16 @@ final readonly class NotePolicy
 
     public function restoreAny(User $user): bool
     {
-        return $user->hasVerifiedEmail() && $user->currentTeam !== null;
+        return $user->hasVerifiedEmail();
     }
 
-    public function forceDelete(User $user): bool
+    public function forceDelete(User $user, Note $note): bool
     {
-        return $user->hasTeamRole(Filament::getTenant(), 'admin');
+        return $user->currentTeam && $user->hasTeamRole($user->currentTeam, 'admin');
     }
 
     public function forceDeleteAny(User $user): bool
     {
-        return $user->hasTeamRole(Filament::getTenant(), 'admin');
+        return $user->currentTeam && $user->hasTeamRole($user->currentTeam, 'admin');
     }
 }

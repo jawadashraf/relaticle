@@ -17,7 +17,6 @@ use function Pest\Livewire\livewire;
 beforeEach(function () {
     $this->user = User::factory()->withPersonalTeam()->create();
     $this->actingAs($this->user);
-    Filament::setTenant($this->user->personalTeam());
 
     // Ensure custom fields are seeded for the test team
     $this->seed(\Database\Seeders\ServiceUserCustomFieldSeeder::class);

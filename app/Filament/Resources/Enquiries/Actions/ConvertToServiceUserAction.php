@@ -89,9 +89,9 @@ final class ConvertToServiceUserAction extends Action
                     unset($customFields['target_service_team']);
 
                     // Promote to Service User and Pass Custom Fields to Observer
+                    $person->custom_fields = $customFields;
                     $person->update([
                         'is_service_user' => true,
-                        'custom_fields' => $customFields,
                     ]);
 
                     // Update Enquiry Status

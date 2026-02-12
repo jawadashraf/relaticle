@@ -10,7 +10,6 @@ use function Pest\Livewire\livewire;
 beforeEach(function () {
     $this->user = User::factory()->withPersonalTeam()->create();
     $this->actingAs($this->user);
-    Filament::setTenant($this->user->personalTeam());
 });
 
 it('can render the index page', function (): void {
@@ -19,7 +18,7 @@ it('can render the index page', function (): void {
 });
 
 it('can render the view page', function (): void {
-    $record = App\Models\Opportunity::factory()->for($this->user->personalTeam())->create();
+    $record = App\Models\Opportunity::factory()->create();
 
     livewire(App\Filament\Resources\OpportunityResource\Pages\ViewOpportunity::class, ['record' => $record->getKey()])
         ->assertOk();
@@ -46,7 +45,7 @@ it('shows `:dataset` column', function (string $column): void {
 })->with(['name', 'creator.name', 'deleted_at', 'created_at', 'updated_at']);
 
 it('can sort `:dataset` column', function (string $column): void {
-    $records = App\Models\Opportunity::factory(3)->for($this->user->personalTeam())->create();
+    $records = App\Models\Opportunity::factory(3)->create();
 
     $sortingKey = data_get($records->first(), $column) instanceof BackedEnum
         ? fn (Illuminate\Database\Eloquent\Model $record) => data_get($record, $column)->value
@@ -60,7 +59,7 @@ it('can sort `:dataset` column', function (string $column): void {
 })->with(['creator.name', 'deleted_at', 'created_at', 'updated_at']);
 
 it('can search `:dataset` column', function (string $column): void {
-    $records = App\Models\Opportunity::factory(3)->for($this->user->personalTeam())->create();
+    $records = App\Models\Opportunity::factory(3)->create();
     $search = data_get($records->first(), $column);
 
     livewire(App\Filament\Resources\OpportunityResource\Pages\ListOpportunities::class)
@@ -70,8 +69,8 @@ it('can search `:dataset` column', function (string $column): void {
 })->with(['name', 'creator.name']);
 
 it('cannot display trashed records by default', function (): void {
-    $records = App\Models\Opportunity::factory()->count(4)->for($this->user->personalTeam())->create();
-    $trashedRecords = App\Models\Opportunity::factory()->trashed()->count(6)->for($this->user->personalTeam())->create();
+    $records = App\Models\Opportunity::factory()->count(4)->create();
+    $trashedRecords = App\Models\Opportunity::factory()->trashed()->count(6)->create();
 
     livewire(App\Filament\Resources\OpportunityResource\Pages\ListOpportunities::class)
         ->assertCanSeeTableRecords($records)
@@ -80,7 +79,7 @@ it('cannot display trashed records by default', function (): void {
 });
 
 it('can paginate records', function (): void {
-    $records = App\Models\Opportunity::factory(20)->for($this->user->personalTeam())->create();
+    $records = App\Models\Opportunity::factory(20)->create();
 
     livewire(App\Filament\Resources\OpportunityResource\Pages\ListOpportunities::class)
         ->assertCanSeeTableRecords($records->take(10), inOrder: true)
@@ -89,7 +88,7 @@ it('can paginate records', function (): void {
 });
 
 it('can bulk delete records', function (): void {
-    $records = App\Models\Opportunity::factory(5)->for($this->user->personalTeam())->create();
+    $records = App\Models\Opportunity::factory(5)->create();
 
     livewire(App\Filament\Resources\OpportunityResource\Pages\ListOpportunities::class)
         ->assertCanSeeTableRecords($records)

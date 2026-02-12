@@ -31,7 +31,6 @@ test('exports company records with basic functionality', function () {
     $user->teams()->attach($team);
 
     $this->actingAs($user);
-    Filament::setTenant($team);
 
     // Create companies
     $companies = Company::factory()->count(3)->create(['team_id' => $team->id]);
@@ -61,7 +60,6 @@ test('exports respect team scoping', function () {
     $user->teams()->attach([$team1->id, $team2->id]);
 
     $this->actingAs($user);
-    Filament::setTenant($team1);
 
     // Create companies for first team
     $team1Companies = Company::factory()
@@ -84,7 +82,6 @@ test('exports include company custom fields', function () {
     $user->teams()->attach($team);
 
     $this->actingAs($user);
-    Filament::setTenant($team);
 
     // Create a custom test field
     $migrator = app(CustomsFieldsMigrators::class);
