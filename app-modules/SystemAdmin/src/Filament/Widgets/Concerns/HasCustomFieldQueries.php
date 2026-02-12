@@ -175,8 +175,8 @@ trait HasCustomFieldQueries
                 ->join('custom_fields as cf2', 'cfo2.custom_field_id', '=', 'cf2.id')
                 ->whereRaw('cf2.entity_type = cf.entity_type')
                 ->whereRaw('cf2.code = cf.code')
-                ->whereRaw('cf2.tenant_id = cf.tenant_id')
-                ->groupBy('cf2.tenant_id')
+                ->whereRaw('cf2.team_id = cf.team_id')
+                ->groupBy('cf2.team_id')
             )
             ->pluck('cfo.id')
             ->toArray();

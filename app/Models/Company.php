@@ -7,8 +7,10 @@ namespace App\Models;
 use App\Enums\CreationSource;
 use App\Models\Concerns\HasAiSummary;
 use App\Models\Concerns\HasCreator;
+use App\Models\Concerns\HasCustomFields;
 use App\Models\Concerns\HasNotes;
 use App\Models\Concerns\HasTeam;
+use App\Models\Contracts\HasCustomFields as HasCustomFieldsContract;
 use App\Observers\CompanyObserver;
 use App\Services\AvatarService;
 use Database\Factories\CompanyFactory;
@@ -20,8 +22,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
-use Relaticle\CustomFields\Models\Concerns\UsesCustomFields;
-use Relaticle\CustomFields\Models\Contracts\HasCustomFields;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -35,19 +35,19 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property-read string $created_by
  */
 #[ObservedBy(CompanyObserver::class)]
-final class Company extends Model implements HasCustomFields, HasMedia
+final class Company extends Model implements HasCustomFieldsContract, HasMedia
 {
     use HasAiSummary;
     use HasCreator;
 
+    use HasCustomFields;
+
     /** @use HasFactory<CompanyFactory> */
     use HasFactory;
-
     use HasNotes;
     use HasTeam;
     use InteractsWithMedia;
     use SoftDeletes;
-    use UsesCustomFields;
 
     /**
      * @var list<string>

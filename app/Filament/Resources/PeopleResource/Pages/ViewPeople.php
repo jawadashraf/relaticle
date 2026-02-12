@@ -8,6 +8,7 @@ use App\Filament\Actions\GenerateRecordSummaryAction;
 use App\Filament\Resources\CompanyResource;
 use App\Filament\Resources\PeopleResource;
 use App\Models\People;
+use App\Support\CustomFields;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -18,7 +19,6 @@ use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\TextSize;
-use Relaticle\CustomFields\Facades\CustomFields;
 
 final class ViewPeople extends ViewRecord
 {

@@ -7,12 +7,12 @@ namespace App\Filament\Imports;
 use App\Enums\CreationSource;
 use App\Models\Company;
 use App\Models\People;
+use App\Support\CustomFields;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Number;
-use Relaticle\CustomFields\Facades\CustomFields;
 
 final class PeopleImporter extends BaseImporter
 {

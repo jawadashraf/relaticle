@@ -10,7 +10,7 @@ use App\Models\Enquiry;
 use App\Models\People;
 use App\Models\User;
 use Filament\Facades\Filament;
-use Relaticle\CustomFields\Models\CustomField;
+use App\Models\CustomField;
 
 use function Pest\Livewire\livewire;
 

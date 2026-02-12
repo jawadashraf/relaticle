@@ -12,7 +12,7 @@ use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Auth;
-use Relaticle\CustomFields\Models\CustomField;
+use App\Models\CustomField;
 
 final class LocalSeeder extends Seeder
 {

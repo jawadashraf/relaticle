@@ -9,6 +9,7 @@ use App\Filament\Resources\CompanyResource;
 use App\Filament\Resources\OpportunityResource;
 use App\Filament\Resources\PeopleResource;
 use App\Models\Opportunity;
+use App\Support\CustomFields;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -17,7 +18,6 @@ use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Relaticle\CustomFields\Facades\CustomFields;
 
 final class ViewOpportunity extends ViewRecord
 {

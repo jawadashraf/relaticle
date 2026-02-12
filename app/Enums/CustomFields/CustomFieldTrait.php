@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Enums\CustomFields;
 
 use Illuminate\Support\Str;
-use Relaticle\CustomFields\Enums\CustomFieldWidth;
 
 /**
  * Trait for custom field enums to provide configuration data

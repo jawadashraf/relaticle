@@ -6,8 +6,10 @@ namespace App\Models;
 
 use App\Enums\CreationSource;
 use App\Models\Concerns\HasCreator;
+use App\Models\Concerns\HasCustomFields;
 use App\Models\Concerns\HasTeam;
 use App\Models\Concerns\InvalidatesRelatedAiSummaries;
+use App\Models\Contracts\HasCustomFields as HasCustomFieldsContract;
 use App\Observers\NoteObserver;
 use Database\Factories\NoteFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -16,25 +18,23 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
-use Relaticle\CustomFields\Models\Concerns\UsesCustomFields;
-use Relaticle\CustomFields\Models\Contracts\HasCustomFields;
 
 /**
  * @property Carbon|null $deleted_at
  * @property CreationSource $creation_source
  */
 #[ObservedBy(NoteObserver::class)]
-final class Note extends Model implements HasCustomFields
+final class Note extends Model implements HasCustomFieldsContract
 {
     use HasCreator;
 
+    use HasCustomFields;
+
     /** @use HasFactory<NoteFactory> */
     use HasFactory;
-
     use HasTeam;
     use InvalidatesRelatedAiSummaries;
     use SoftDeletes;
-    use UsesCustomFields;
 
     /**
      * The attributes that are mass assignable.

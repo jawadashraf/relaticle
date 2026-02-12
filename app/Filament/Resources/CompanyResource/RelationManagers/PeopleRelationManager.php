@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\CompanyResource\RelationManagers;
 
+use App\Support\CustomFields;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -16,7 +17,6 @@ use Filament\Schemas\Schema;
 use Filament\Support\Enums\Size;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Relaticle\CustomFields\Facades\CustomFields;
 
 final class PeopleRelationManager extends RelationManager
 {

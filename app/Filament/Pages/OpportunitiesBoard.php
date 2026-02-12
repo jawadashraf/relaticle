@@ -6,8 +6,11 @@ namespace App\Filament\Pages;
 
 use App\Enums\CustomFields\OpportunityField as OpportunityCustomField;
 use App\Filament\Resources\OpportunityResource\Forms\OpportunityForm;
+use App\Models\CustomField;
+use App\Models\CustomFieldOption;
 use App\Models\Opportunity;
 use App\Models\Team;
+use App\Support\CustomFields;
 use BackedEnum;
 use Exception;
 use Filament\Actions\Action;
@@ -19,9 +22,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use League\CommonMark\Exception\InvalidArgumentException;
-use Relaticle\CustomFields\Facades\CustomFields;
-use Relaticle\CustomFields\Models\CustomField;
-use Relaticle\CustomFields\Models\CustomFieldOption;
 use Relaticle\Flowforge\Board;
 use Relaticle\Flowforge\BoardPage;
 use Relaticle\Flowforge\Column;
@@ -48,10 +48,10 @@ final class OpportunitiesBoard extends BoardPage
     {
         return $board
             ->query(
-                Opportunity::query()
+                fn () => Opportunity::query()
                     ->leftJoin('custom_field_values as cfv', function (\Illuminate\Database\Query\JoinClause $join): void {
                         $join->on('opportunities.id', '=', 'cfv.entity_id')
-                            ->where('cfv.custom_field_id', '=', $this->stageCustomField()->getKey());
+                            ->where('cfv.custom_field_id', '=', $this->stageCustomField()?->getKey());
                     })
                     ->select('opportunities.*', 'cfv.integer_value')
                     ->with(['company', 'contact'])
@@ -61,22 +61,29 @@ final class OpportunitiesBoard extends BoardPage
             ->positionIdentifier('order_column')
             ->searchable(['name'])
             ->columns($this->getColumns())
-            ->cardSchema(fn (Schema $schema): Schema => $schema->components([
-                CustomFields::infolist()
+            ->cardSchema(function (Schema $schema): Schema {
+                $descriptionCustomField = CustomFields::infolist()
                     ->forSchema($schema)
                     ->only(['description'])
                     ->hiddenLabels()
                     ->visibleWhenFilled()
                     ->withoutSections()
                     ->values()
-                    ->first()
-                    ?->columnSpanFull()
-                    ->visible(filled(...))
-                    ->formatStateUsing(fn (string $state): string => str($state)->stripTags()->limit()->toString()),
-                CardFlex::make([
+                    ->first();
 
-                ]),
-            ]))
+                $components = [];
+
+                if ($descriptionCustomField) {
+                    $components[] = $descriptionCustomField
+                        ->columnSpanFull()
+                        ->visible(filled(...))
+                        ->formatStateUsing(fn (?string $state): string => str((string) $state)->stripTags()->limit()->toString());
+                }
+
+                $components[] = CardFlex::make([]);
+
+                return $schema->components($components);
+            })
             ->columnActions([
                 CreateAction::make()
                     ->label('Add Opportunity')
@@ -155,6 +162,7 @@ final class OpportunitiesBoard extends BoardPage
             throw new InvalidArgumentException('Board query not available');
         }
 
+        /** @var Opportunity|null $card */
         $card = (clone $query)->find($cardId);
         if (! $card) {
             throw new InvalidArgumentException("Card not found: {$cardId}");
@@ -169,10 +177,10 @@ final class OpportunitiesBoard extends BoardPage
             $columnValue = $this->resolveStatusValue($card, $columnIdentifier, $targetColumnId);
             $positionIdentifier = $board->getPositionIdentifierAttribute();
 
+            /** @var Opportunity $card */
             $card->update([$positionIdentifier => $newPosition]);
 
-            /** @var Opportunity $card */
-            $card->saveCustomFieldValue($this->stageCustomField(), $columnValue);
+            $card->saveCustomFieldValue($this->stageCustomField(), (string) $columnValue);
         });
 
         // Emit success event after successful transaction
@@ -192,9 +200,9 @@ final class OpportunitiesBoard extends BoardPage
      */
     private function getColumns(): array
     {
-        return $this->stages()->map(fn (array $stage): \Relaticle\Flowforge\Column => Column::make((string) $stage['id'])
-            ->color($stage['color'])
-            ->label($stage['name'])
+        return $this->statuses()->map(fn (array $status): Column => Column::make((string) $status['id'])
+            ->color($status['color'])
+            ->label($status['name'])
         )->toArray();
     }
 
@@ -210,7 +218,7 @@ final class OpportunitiesBoard extends BoardPage
     /**
      * @return Collection<int, array{id: mixed, custom_field_id: mixed, name: mixed, color: string}>
      */
-    private function stages(): Collection
+    private function statuses(): Collection
     {
         $field = $this->stageCustomField();
 
@@ -231,6 +239,6 @@ final class OpportunitiesBoard extends BoardPage
 
     public static function canAccess(): bool
     {
-        return (new self)->stageCustomField() instanceof CustomField;
+        return true;
     }
 }

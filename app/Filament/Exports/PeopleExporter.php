@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Filament\Exports;
 
 use App\Models\People;
+use App\Support\CustomFields;
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Models\Export;
 use Illuminate\Support\Number;
-use Relaticle\CustomFields\Facades\CustomFields;
 
 final class PeopleExporter extends BaseExporter
 {

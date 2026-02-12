@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Filament\Resources\CompanyResource\Pages;
 
 use App\Filament\Resources\CompanyResource;
+use App\Support\CustomFields\Concerns\InteractsWithCustomFields;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Enums\Size;
 use Override;
-use Relaticle\CustomFields\Concerns\InteractsWithCustomFields;
 
 final class ListCompanies extends ListRecords
 {

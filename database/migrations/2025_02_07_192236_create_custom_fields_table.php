@@ -5,10 +5,6 @@ declare(strict_types=1);
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Relaticle\CustomFields\CustomFields;
-use Relaticle\CustomFields\Enums\CustomFieldsFeature;
-use Relaticle\CustomFields\FeatureSystem\FeatureManager;
-use Relaticle\CustomFields\Models\CustomField;
 
 return new class extends Migration
 {
@@ -17,16 +13,10 @@ return new class extends Migration
         /**
          * Custom Field Sections
          */
-        Schema::create(config('custom-fields.database.table_names.custom_field_sections'), function (Blueprint $table): void {
-            $uniqueColumns = ['entity_type', 'code'];
-
+        Schema::create('custom_field_sections', function (Blueprint $table): void {
             $table->id();
 
-            if (FeatureManager::isEnabled(CustomFieldsFeature::SYSTEM_MULTI_TENANCY)) {
-                $table->foreignId(config('custom-fields.database.column_names.tenant_foreign_key'))->nullable()->index();
-                $uniqueColumns[] = config('custom-fields.database.column_names.tenant_foreign_key');
-            }
-
+            $table->foreignId('team_id')->nullable()->index();
             $table->string('width')->nullable();
 
             $table->string('code');
@@ -42,13 +32,9 @@ return new class extends Migration
 
             $table->json('settings')->nullable();
 
-            $table->unique($uniqueColumns);
+            $table->unique(['entity_type', 'code', 'team_id']);
 
-            if (FeatureManager::isEnabled(CustomFieldsFeature::SYSTEM_MULTI_TENANCY)) {
-                $table->index([config('custom-fields.database.column_names.tenant_foreign_key'), 'entity_type', 'active'], 'custom_field_sections_tenant_entity_active_idx');
-            } else {
-                $table->index(['entity_type', 'active'], 'custom_field_sections_entity_active_idx');
-            }
+            $table->index(['team_id', 'entity_type', 'active'], 'cf_sections_team_entity_active_idx');
 
             $table->timestamps();
         });
@@ -56,18 +42,13 @@ return new class extends Migration
         /**
          * Custom Fields
          */
-        Schema::create(config('custom-fields.database.table_names.custom_fields'), function (Blueprint $table): void {
-            $uniqueColumns = ['code', 'entity_type'];
-
+        Schema::create('custom_fields', function (Blueprint $table): void {
             $table->id();
 
             $table->unsignedBigInteger('custom_field_section_id')->nullable();
             $table->string('width')->nullable();
 
-            if (FeatureManager::isEnabled(CustomFieldsFeature::SYSTEM_MULTI_TENANCY)) {
-                $table->foreignId(config('custom-fields.database.column_names.tenant_foreign_key'))->nullable()->index();
-                $uniqueColumns[] = config('custom-fields.database.column_names.tenant_foreign_key');
-            }
+            $table->foreignId('team_id')->nullable()->index();
 
             $table->string('code');
             $table->string('name');
@@ -82,13 +63,9 @@ return new class extends Migration
 
             $table->json('settings')->nullable();
 
-            $table->unique($uniqueColumns);
+            $table->unique(['code', 'entity_type', 'team_id'], 'custom_fields_code_entity_type_team_id_unique');
 
-            if (FeatureManager::isEnabled(CustomFieldsFeature::SYSTEM_MULTI_TENANCY)) {
-                $table->index([config('custom-fields.database.column_names.tenant_foreign_key'), 'entity_type', 'active'], 'custom_fields_tenant_entity_active_idx');
-            } else {
-                $table->index(['entity_type', 'active'], 'custom_fields_entity_active_idx');
-            }
+            $table->index(['team_id', 'entity_type', 'active'], 'custom_fields_team_entity_active_idx');
 
             $table->timestamps();
         });
@@ -96,17 +73,12 @@ return new class extends Migration
         /**
          * Custom Field Options
          */
-        Schema::create(config('custom-fields.database.table_names.custom_field_options'), function (Blueprint $table): void {
-            $uniqueColumns = ['custom_field_id', 'name'];
-
+        Schema::create('custom_field_options', function (Blueprint $table): void {
             $table->id();
 
-            if (FeatureManager::isEnabled(CustomFieldsFeature::SYSTEM_MULTI_TENANCY)) {
-                $table->foreignId(config('custom-fields.database.column_names.tenant_foreign_key'))->nullable()->index();
-                $uniqueColumns[] = config('custom-fields.database.column_names.tenant_foreign_key');
-            }
+            $table->foreignId('team_id')->nullable()->index();
 
-            $table->foreignIdFor(CustomFields::customFieldModel())
+            $table->foreignId('custom_field_id')
                 ->constrained()
                 ->cascadeOnDelete();
 
@@ -116,24 +88,19 @@ return new class extends Migration
 
             $table->timestamps();
 
-            $table->unique($uniqueColumns);
+            $table->unique(['custom_field_id', 'name', 'team_id']);
         });
 
         /**
          * Custom Field Values
          */
-        Schema::create(config('custom-fields.database.table_names.custom_field_values'), function (Blueprint $table): void {
-            $uniqueColumns = ['entity_type', 'entity_id', 'custom_field_id'];
-
+        Schema::create('custom_field_values', function (Blueprint $table): void {
             $table->id();
 
-            if (FeatureManager::isEnabled(CustomFieldsFeature::SYSTEM_MULTI_TENANCY)) {
-                $table->foreignId(config('custom-fields.database.column_names.tenant_foreign_key'))->nullable()->index();
-                $uniqueColumns[] = config('custom-fields.database.column_names.tenant_foreign_key');
-            }
+            $table->foreignId('team_id')->nullable()->index();
 
             $table->morphs('entity');
-            $table->foreignIdFor(CustomField::class)
+            $table->foreignId('custom_field_id')
                 ->constrained()
                 ->cascadeOnDelete();
 
@@ -146,13 +113,9 @@ return new class extends Migration
             $table->dateTime('datetime_value')->nullable();
             $table->json('json_value')->nullable();
 
-            $table->unique($uniqueColumns, 'custom_field_values_entity_type_unique');
+            $table->unique(['entity_type', 'entity_id', 'custom_field_id', 'team_id'], 'custom_field_values_entity_type_unique');
 
-            if (FeatureManager::isEnabled(CustomFieldsFeature::SYSTEM_MULTI_TENANCY)) {
-                $table->index([config('custom-fields.database.column_names.tenant_foreign_key'), 'entity_type', 'entity_id'], 'custom_field_values_tenant_entity_idx');
-            } else {
-                $table->index(['entity_type', 'entity_id'], 'custom_field_values_entity_idx');
-            }
+            $table->index(['team_id', 'entity_type', 'entity_id'], 'custom_field_values_team_entity_idx');
 
             $table->index(['entity_id', 'custom_field_id'], 'custom_field_values_entity_id_custom_field_id_index');
         });
@@ -160,9 +123,9 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists(config('custom-fields.database.table_names.custom_field_values'));
-        Schema::dropIfExists(config('custom-fields.database.table_names.custom_field_options'));
-        Schema::dropIfExists(config('custom-fields.database.table_names.custom_fields'));
-        Schema::dropIfExists(config('custom-fields.database.table_names.custom_field_sections'));
+        Schema::dropIfExists('custom_field_values');
+        Schema::dropIfExists('custom_field_options');
+        Schema::dropIfExists('custom_fields');
+        Schema::dropIfExists('custom_field_sections');
     }
 };

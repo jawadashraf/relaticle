@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\OpportunityResource\RelationManagers;
 
 use App\Filament\Resources\TaskResource\Forms\TaskForm;
+use App\Support\CustomFields;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\AttachAction;
 use Filament\Actions\BulkActionGroup;
@@ -19,7 +20,6 @@ use Filament\Schemas\Schema;
 use Filament\Support\Enums\Size;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Relaticle\CustomFields\Facades\CustomFields;
 
 final class TasksRelationManager extends RelationManager
 {

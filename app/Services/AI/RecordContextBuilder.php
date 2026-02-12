@@ -251,10 +251,10 @@ final readonly class RecordContextBuilder
             return null;
         }
 
-        /** @var Collection<int, \Relaticle\CustomFields\Models\CustomFieldValue> $customFieldValues */
+        /** @var Collection<int, \App\Models\CustomFieldValue> $customFieldValues */
         $customFieldValues = $model->customFieldValues; // @phpstan-ignore property.notFound
 
-        $customFieldValue = $customFieldValues->first(fn (\Relaticle\CustomFields\Models\CustomFieldValue $cfv): bool => $cfv->customField->code === $code);
+        $customFieldValue = $customFieldValues->filter(fn (\App\Models\CustomFieldValue $cfv): bool => $cfv->customField && $cfv->customField->code === $code)->first();
 
         if ($customFieldValue === null) {
             return null;

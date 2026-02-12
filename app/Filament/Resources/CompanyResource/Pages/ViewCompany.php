@@ -13,6 +13,7 @@ use App\Filament\Resources\CompanyResource\RelationManagers\PeopleRelationManage
 use App\Filament\Resources\CompanyResource\RelationManagers\TasksRelationManager;
 use App\Jobs\FetchFaviconForCompany;
 use App\Models\Company;
+use App\Support\CustomFields;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -21,7 +22,6 @@ use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Relaticle\CustomFields\Facades\CustomFields;
 
 final class ViewCompany extends ViewRecord
 {

@@ -6,8 +6,10 @@ namespace App\Models;
 
 use App\Enums\CreationSource;
 use App\Models\Concerns\HasCreator;
+use App\Models\Concerns\HasCustomFields;
 use App\Models\Concerns\HasTeam;
 use App\Models\Concerns\InvalidatesRelatedAiSummaries;
+use App\Models\Contracts\HasCustomFields as HasCustomFieldsContract;
 use App\Observers\TaskObserver;
 use Database\Factories\TaskFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -18,9 +20,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
-use Relaticle\CustomFields\Models\Concerns\UsesCustomFields;
-use Relaticle\CustomFields\Models\Contracts\HasCustomFields;
-use Relaticle\CustomFields\Models\CustomField;
 use Spatie\EloquentSortable\SortableTrait;
 
 /**
@@ -32,18 +31,18 @@ use Spatie\EloquentSortable\SortableTrait;
  * @method void saveCustomFieldValue(CustomField $field, mixed $value)
  */
 #[ObservedBy(TaskObserver::class)]
-final class Task extends Model implements HasCustomFields
+final class Task extends Model implements HasCustomFieldsContract
 {
     use HasCreator;
 
+    use HasCustomFields;
+
     /** @use HasFactory<TaskFactory> */
     use HasFactory;
-
     use HasTeam;
     use InvalidatesRelatedAiSummaries;
     use SoftDeletes;
     use SortableTrait;
-    use UsesCustomFields;
 
     protected $fillable = [
         'user_id',

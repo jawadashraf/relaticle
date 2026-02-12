@@ -23,5 +23,9 @@ final readonly class PeopleObserver
     public function saved(People $people): void
     {
         $people->invalidateAiSummary();
+
+        if (isset($people->custom_fields) && is_array($people->custom_fields)) {
+            $people->saveCustomFields($people->custom_fields);
+        }
     }
 }

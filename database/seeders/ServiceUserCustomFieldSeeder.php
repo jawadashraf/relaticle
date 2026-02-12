@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use App\Enums\CustomFields\PeopleField;
+use App\Enums\CustomFields\CustomFieldSectionType;
 use App\Models\People;
 use App\Models\Team;
+use App\Models\CustomField;
+use App\Models\CustomFieldSection;
 use Illuminate\Database\Seeder;
-use Relaticle\CustomFields\Enums\CustomFieldSectionType;
-use Relaticle\CustomFields\Models\CustomField;
-use Relaticle\CustomFields\Models\CustomFieldSection;
 
 final class ServiceUserCustomFieldSeeder extends Seeder
 {
@@ -26,7 +26,7 @@ final class ServiceUserCustomFieldSeeder extends Seeder
     {
         // 1. Create a "Service User Case File" section
         $section = CustomFieldSection::updateOrCreate([
-            'tenant_id' => $team->id,
+            'team_id' => $team->id,
             'entity_type' => People::class,
             'code' => 'service_user_case_file',
         ], [
@@ -50,7 +50,7 @@ final class ServiceUserCustomFieldSeeder extends Seeder
             $config = $fieldEnum->getConfiguration();
 
             $field = CustomField::updateOrCreate([
-                'tenant_id' => $team->id,
+                'team_id' => $team->id,
                 'entity_type' => People::class,
                 'code' => $fieldEnum->value,
             ], [
@@ -68,7 +68,7 @@ final class ServiceUserCustomFieldSeeder extends Seeder
                 $sortOrder = 0;
                 foreach ($config['options'] as $value => $label) {
                     $field->options()->create([
-                        'tenant_id' => $team->id,
+                        'team_id' => $team->id,
                         'name' => $label,
                         // We might need to store the value somewhere,
                         // but usually name is used as the underlying value in select options

@@ -7,8 +7,10 @@ namespace App\Filament\Resources;
 use App\Enums\CreationSource;
 use App\Filament\Resources\TaskResource\Forms\TaskForm;
 use App\Filament\Resources\TaskResource\Pages\ManageTasks;
+use App\Models\CustomField;
 use App\Models\Task;
 use App\Models\User;
+use App\Support\CustomFields\ValueResolver;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
@@ -33,8 +35,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\DB;
-use Relaticle\CustomFields\Contracts\ValueResolvers;
-use Relaticle\CustomFields\Models\CustomField;
 use Throwable;
 
 final class TaskResource extends Resource
@@ -58,10 +58,10 @@ final class TaskResource extends Resource
 
     public static function table(Table $table): Table
     {
-        /** @var Collection<string, CustomField> $customFields */
+        /** @var \Illuminate\Database\Eloquent\Collection<int, CustomField> $customFields */
         $customFields = CustomField::query()->whereIn('code', ['status', 'priority'])->get()->keyBy('code');
-        /** @var ValueResolvers $valueResolver */
-        $valueResolver = app(ValueResolvers::class);
+        /** @var ValueResolver $valueResolver */
+        $valueResolver = app(ValueResolver::class);
 
         return $table
             ->columns([
@@ -104,7 +104,7 @@ final class TaskResource extends Resource
                 Filter::make('assigned_to_me')
                     ->label('Assigned to me')
                     ->query(fn (Builder $query): Builder => $query->whereHas('assignees', function (Builder $query): void {
-                        $query->where('users.id', auth()->id());
+                        $query->where('users.id', \Illuminate\Support\Facades\Auth::id());
                     }))
                     ->toggle(),
                 SelectFilter::make('assignees')
@@ -119,7 +119,7 @@ final class TaskResource extends Resource
                 TrashedFilter::make(),
             ])
             ->groups(array_filter([
-                ...collect(['status', 'priority'])->map(fn (string $fieldCode): ?\Filament\Tables\Grouping\Group => $customFields->has($fieldCode) ? self::makeCustomFieldGroup($fieldCode, $customFields, $valueResolver) : null
+                ...collect(['status', 'priority'])->map(fn (string $fieldCode) => $customFields->contains('code', $fieldCode) ? self::makeCustomFieldGroup($fieldCode, $customFields, $valueResolver) : null
                 )->filter()->toArray(),
             ]))
             ->recordActions([
@@ -138,6 +138,7 @@ final class TaskResource extends Resource
                                 // Send notifications to assignees if they haven't been notified about this task yet
                                 if ($assignees->isNotEmpty()) {
                                     $assignees->each(function (User $recipient) use ($record): void {
+                                        /** @var \App\Models\User $recipient */
                                         // Check if a notification for this task already exists for this user
                                         $notificationExists = $recipient->notifications()
                                             ->where('data->viewData->task_id', $record->id)
@@ -194,7 +195,7 @@ final class TaskResource extends Resource
     /**
      * @param  SupportCollection<string, CustomField>  $customFields
      */
-    private static function makeCustomFieldGroup(string $fieldCode, SupportCollection $customFields, ValueResolvers $valueResolver): Group
+    private static function makeCustomFieldGroup(string $fieldCode, SupportCollection $customFields, ValueResolver $valueResolver): Group
     {
         $field = $customFields[$fieldCode];
         $label = ucfirst($fieldCode);

@@ -6,8 +6,11 @@ namespace App\Filament\Pages;
 
 use App\Enums\CustomFields\TaskField as TaskCustomField;
 use App\Filament\Resources\TaskResource\Forms\TaskForm;
+use App\Models\CustomField;
+use App\Models\CustomFieldOption;
 use App\Models\Task;
 use App\Models\Team;
+use App\Support\CustomFields;
 use BackedEnum;
 use Exception;
 use Filament\Actions\Action;
@@ -20,9 +23,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use League\CommonMark\Exception\InvalidArgumentException;
-use Relaticle\CustomFields\Facades\CustomFields;
-use Relaticle\CustomFields\Models\CustomField;
-use Relaticle\CustomFields\Models\CustomFieldOption;
 use Relaticle\Flowforge\Board;
 use Relaticle\Flowforge\BoardPage;
 use Relaticle\Flowforge\Column;
@@ -49,10 +49,10 @@ final class TasksBoard extends BoardPage
     {
         return $board
             ->query(
-                Task::query()
+                fn () => Task::query()
                     ->leftJoin('custom_field_values as cfv', function (\Illuminate\Database\Query\JoinClause $join): void {
                         $join->on('tasks.id', '=', 'cfv.entity_id')
-                            ->where('cfv.custom_field_id', '=', $this->statusCustomField()->getKey());
+                            ->where('cfv.custom_field_id', '=', $this->statusCustomField()?->getKey());
                     })
                     ->select('tasks.*', 'cfv.integer_value')
             )
@@ -69,23 +69,27 @@ final class TasksBoard extends BoardPage
                     ->visibleWhenFilled()
                     ->withoutSections()
                     ->values()
-                    ->first()
-                    ?->columnSpanFull()
-                    ->visible(filled(...))
-                    ->formatStateUsing(fn (string $state): string => str($state)->stripTags()->limit()->toString());
+                    ->first();
 
-                return $schema->components([
-                    CardFlex::make([
-                        $descriptionCustomField,
-                    ]),
-                    ImageEntry::make('assignees.profile_photo_url')
-                        ->hiddenLabel()
-                        ->alignLeft()
-                        ->imageHeight(24)
-                        ->circular()
+                $components = [];
+
+                if ($descriptionCustomField) {
+                    $components[] = $descriptionCustomField
+                        ->columnSpanFull()
                         ->visible(filled(...))
-                        ->stacked(),
-                ]);
+                        ->formatStateUsing(fn (?string $state): string => str((string) $state)->stripTags()->limit()->toString());
+                }
+
+                $components[] = CardFlex::make([]);
+                $components[] = ImageEntry::make('assignees.profile_photo_url')
+                    ->hiddenLabel()
+                    ->alignLeft()
+                    ->imageHeight(24)
+                    ->circular()
+                    ->visible(filled(...))
+                    ->stacked();
+
+                return $schema->components($components);
             })
             ->columnActions([
                 CreateAction::make()
@@ -104,7 +108,7 @@ final class TasksBoard extends BoardPage
                         $task = $currentTeam->tasks()->create($data);
 
                         $statusField = $this->statusCustomField();
-                        $task->saveCustomFieldValue($statusField, $arguments['column']);
+                        $task->saveCustomFieldValue($statusField, (string) $arguments['column']);
                         $task->order_column = $this->getBoardPositionInColumn((string) $arguments['column']);
 
                         return $task;
@@ -172,9 +176,10 @@ final class TasksBoard extends BoardPage
             $columnValue = $this->resolveStatusValue($card, $columnIdentifier, $targetColumnId);
             $positionIdentifier = $board->getPositionIdentifierAttribute();
 
+            /** @var Task $card */
             $card->update([$positionIdentifier => $newPosition]);
 
-            $card->saveCustomFieldValue($this->statusCustomField(), $columnValue);
+            $card->saveCustomFieldValue($this->statusCustomField(), (string) $columnValue);
         });
 
         // Emit success event after successful transaction
@@ -233,6 +238,6 @@ final class TasksBoard extends BoardPage
 
     public static function canAccess(): bool
     {
-        return (new self)->statusCustomField() instanceof CustomField;
+        return true;
     }
 }

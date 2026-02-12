@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Enums\CustomFields;
 
 use App\Enums\CustomFieldType;
-use Relaticle\CustomFields\Enums\CustomFieldWidth;
 
 enum TaskField: string
 {

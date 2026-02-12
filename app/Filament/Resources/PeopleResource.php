@@ -12,6 +12,7 @@ use App\Filament\Resources\PeopleResource\RelationManagers\NotesRelationManager;
 use App\Filament\Resources\PeopleResource\RelationManagers\TasksRelationManager;
 use App\Models\Company;
 use App\Models\People;
+use App\Support\CustomFields;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
@@ -38,7 +39,6 @@ use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Relaticle\CustomFields\Facades\CustomFields;
 
 final class PeopleResource extends Resource
 {
@@ -95,7 +95,7 @@ final class PeopleResource extends Resource
                             ->columnSpan(5),
                     ])
                     ->columns(12),
-                CustomFields::form()->build()->columnSpanFull(),
+                CustomFields::form()->forSchema($schema)->build()->columnSpanFull(),
             ]);
     }
 

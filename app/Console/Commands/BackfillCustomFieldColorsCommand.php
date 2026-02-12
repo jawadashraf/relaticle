@@ -7,9 +7,7 @@ namespace App\Console\Commands;
 use App\Enums\CustomFields\OpportunityField as OpportunityCustomField;
 use App\Enums\CustomFields\TaskField as TaskCustomField;
 use Illuminate\Console\Command;
-use Relaticle\CustomFields\Data\CustomFieldOptionSettingsData;
-use Relaticle\CustomFields\Data\CustomFieldSettingsData;
-use Relaticle\CustomFields\Models\CustomField;
+use App\Models\CustomField;
 
 final class BackfillCustomFieldColorsCommand extends Command
 {
@@ -50,7 +48,7 @@ final class BackfillCustomFieldColorsCommand extends Command
             ->where('type', 'select');
 
         if ($specificTeam) {
-            $query->where('tenant_id', $specificTeam);
+            $query->where('team_id', $specificTeam);
         }
 
         $fields = $query->get();
@@ -67,22 +65,15 @@ final class BackfillCustomFieldColorsCommand extends Command
                 continue;
             }
 
-            $this->info("Processing: {$field->name} for {$field->entity_type} (Team {$field->tenant_id})");
+            $this->info("Processing: {$field->name} for {$field->entity_type} (Team {$field->team_id})");
 
             // Enable colors on the field if not already enabled
-            if (! $field->settings->enable_option_colors) {
+            $settings = (array) $field->settings;
+            if (! ($settings['enable_option_colors'] ?? false)) {
                 if (! $dryRun) {
+                    $settings['enable_option_colors'] = true;
                     $field->update([
-                        'settings' => new CustomFieldSettingsData(
-                            visible_in_list: $field->settings->visible_in_list ?? true,
-                            list_toggleable_hidden: $field->settings->list_toggleable_hidden,
-                            visible_in_view: $field->settings->visible_in_view ?? true,
-                            searchable: $field->settings->searchable ?? false,
-                            encrypted: $field->settings->encrypted ?? false,
-                            enable_option_colors: true,
-                            visibility: $field->settings->visibility ?? null,
-                            additional: $field->settings->additional ?? [],
-                        ),
+                        'settings' => $settings,
                     ]);
                 }
                 $this->line('  ✓ Enabled color options for field');
@@ -95,11 +86,13 @@ final class BackfillCustomFieldColorsCommand extends Command
             foreach ($field->options as $option) {
                 $color = $colorMapping[$option->name] ?? null;
                 if ($color !== null) {
-                    $currentColor = $option->settings->color ?? null;
+                    $optionSettings = (array) $option->settings;
+                    $currentColor = $optionSettings['color'] ?? null;
                     if ($currentColor !== $color) {
                         if (! $dryRun) {
+                            $optionSettings['color'] = $color;
                             $option->update([
-                                'settings' => new CustomFieldOptionSettingsData(color: $color),
+                                'settings' => $optionSettings,
                             ]);
                         }
                         $this->line("  ✓ Set color for '{$option->name}': $color");

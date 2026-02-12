@@ -7,8 +7,10 @@ namespace App\Models;
 use App\Enums\CreationSource;
 use App\Models\Concerns\HasAiSummary;
 use App\Models\Concerns\HasCreator;
+use App\Models\Concerns\HasCustomFields;
 use App\Models\Concerns\HasNotes;
 use App\Models\Concerns\HasTeam;
+use App\Models\Contracts\HasCustomFields as HasCustomFieldsContract;
 use App\Observers\OpportunityObserver;
 use Database\Factories\OpportunityFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -18,8 +20,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
-use Relaticle\CustomFields\Models\Concerns\UsesCustomFields;
-use Relaticle\CustomFields\Models\Contracts\HasCustomFields;
 use Spatie\EloquentSortable\SortableTrait;
 
 /**
@@ -27,19 +27,19 @@ use Spatie\EloquentSortable\SortableTrait;
  * @property CreationSource $creation_source
  */
 #[ObservedBy(OpportunityObserver::class)]
-final class Opportunity extends Model implements HasCustomFields
+final class Opportunity extends Model implements HasCustomFieldsContract
 {
     use HasAiSummary;
     use HasCreator;
 
+    use HasCustomFields;
+
     /** @use HasFactory<OpportunityFactory> */
     use HasFactory;
-
     use HasNotes;
     use HasTeam;
     use SoftDeletes;
     use SortableTrait;
-    use UsesCustomFields;
 
     /**
      * The attributes that are mass assignable.

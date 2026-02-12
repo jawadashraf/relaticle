@@ -10,7 +10,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Relaticle\CustomFields\Models\CustomField;
+use App\Models\CustomField;
 use Relaticle\OnboardSeed\Contracts\ModelSeederInterface;
 
 abstract class BaseModelSeeder implements ModelSeederInterface
@@ -79,7 +79,7 @@ abstract class BaseModelSeeder implements ModelSeederInterface
 
         return CustomField::query()
             ->with('options')
-            ->whereTenantId($this->teamId)
+            ->where('team_id', $this->teamId)
             ->forEntity($this->modelClass)
             ->whereIn('code', $this->fieldCodes)
             ->get()
