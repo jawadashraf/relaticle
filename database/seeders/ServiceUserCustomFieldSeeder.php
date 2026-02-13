@@ -16,17 +16,17 @@ final class ServiceUserCustomFieldSeeder extends Seeder
 {
     public function run(): void
     {
-        // We sync fields for all teams or at least the first one for development
-        Team::all()->each(function (Team $team) {
-            $this->syncFieldsForTeam($team);
-        });
+        // Sync fields globally (no team)
+        $this->syncFieldsForTeam(null);
     }
 
-    private function syncFieldsForTeam(Team $team): void
+    private function syncFieldsForTeam(?Team $team): void
     {
+        $teamId = $team?->id;
+
         // 1. Create a "Service User Case File" section
         $section = CustomFieldSection::updateOrCreate([
-            'team_id' => $team->id,
+            'team_id' => $teamId,
             'entity_type' => People::class,
             'code' => 'service_user_case_file',
         ], [
@@ -50,7 +50,7 @@ final class ServiceUserCustomFieldSeeder extends Seeder
             $config = $fieldEnum->getConfiguration();
 
             $field = CustomField::updateOrCreate([
-                'team_id' => $team->id,
+                'team_id' => $teamId,
                 'entity_type' => People::class,
                 'code' => $fieldEnum->value,
             ], [
@@ -68,7 +68,7 @@ final class ServiceUserCustomFieldSeeder extends Seeder
                 $sortOrder = 0;
                 foreach ($config['options'] as $value => $label) {
                     $field->options()->create([
-                        'team_id' => $team->id,
+                        'team_id' => $teamId,
                         'name' => $label,
                         // We might need to store the value somewhere,
                         // but usually name is used as the underlying value in select options

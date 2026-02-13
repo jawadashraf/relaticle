@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Relaticle\SystemAdmin\Enums\SystemAdministratorRole;
-use Relaticle\SystemAdmin\Models\SystemAdministrator;
 
 final class SystemAdministratorSeeder extends Seeder
 {
@@ -15,12 +13,12 @@ final class SystemAdministratorSeeder extends Seeder
      */
     public function run(): void
     {
-        SystemAdministrator::firstOrCreate(
+        \App\Models\User::firstOrCreate(
             ['email' => 'sysadmin@relaticle.com'],
             [
                 'name' => 'System Administrator',
                 'password' => bcrypt('password'),
-                'role' => SystemAdministratorRole::SuperAdministrator,
+                'is_system_admin' => true,
                 'email_verified_at' => now(),
             ]
         );

@@ -6,16 +6,16 @@ use App\Enums\EnquiryStatus;
 use App\Enums\ServiceTeam;
 use App\Filament\Resources\Enquiries\Actions\ConvertToServiceUserAction;
 use App\Filament\Resources\Enquiries\Pages\ListEnquiries;
+use App\Models\CustomField;
 use App\Models\Enquiry;
 use App\Models\People;
 use App\Models\User;
 use Filament\Facades\Filament;
-use App\Models\CustomField;
 
 use function Pest\Livewire\livewire;
 
 beforeEach(function () {
-    $this->user = User::factory()->withPersonalTeam()->create();
+    $this->user = User::factory()->create();
     $this->actingAs($this->user);
 
     // Ensure custom fields are seeded for the test team
@@ -23,9 +23,9 @@ beforeEach(function () {
 });
 
 it('hides conversion action for already converted enquiries', function (): void {
-    $enquiry = Enquiry::factory()->for($this->user->personalTeam())->create([
+    $enquiry = Enquiry::factory()->create([
         'status' => EnquiryStatus::CONVERTED,
-        'people_id' => People::factory()->for($this->user->personalTeam())->create()->id,
+        'people_id' => People::factory()->create()->id,
     ]);
 
     livewire(ListEnquiries::class)
@@ -33,7 +33,7 @@ it('hides conversion action for already converted enquiries', function (): void 
 });
 
 it('hides conversion action for enquiries without linked caller', function (): void {
-    $enquiry = Enquiry::factory()->for($this->user->personalTeam())->create([
+    $enquiry = Enquiry::factory()->create([
         'status' => EnquiryStatus::OPEN,
         'people_id' => null,
     ]);
@@ -43,11 +43,11 @@ it('hides conversion action for enquiries without linked caller', function (): v
 });
 
 it('can convert open enquiry to service user', function (): void {
-    $person = People::factory()->for($this->user->personalTeam())->create([
+    $person = People::factory()->create([
         'is_service_user' => false,
     ]);
 
-    $enquiry = Enquiry::factory()->for($this->user->personalTeam())->create([
+    $enquiry = Enquiry::factory()->create([
         'status' => EnquiryStatus::OPEN,
         'people_id' => $person->id,
         'user_id' => $this->user->id,
@@ -57,15 +57,18 @@ it('can convert open enquiry to service user', function (): void {
 
     livewire(ListEnquiries::class)
         ->assertTableActionExists('convertToServiceUser')
-        ->callTableAction('convertToServiceUser', $enquiry, data: [
+        ->mountTableAction('convertToServiceUser', $enquiry)
+        ->dump()
+        ->setTableActionData([
             'consent_data_storage' => true,
             'consent_referrals' => true,
             'consent_communications' => false,
             'presenting_issues' => 'Needs help with housing',
             'risk_summary' => 'Low risk',
-            'target_service_team' => 'assessment',
+            'target_service_team' => ServiceTeam::ASSESSMENT->value,
             'engagement_status' => 'active',
         ])
+        ->callMountedTableAction()
         ->assertHasNoTableActionErrors();
 
     // Verify Enquiry status

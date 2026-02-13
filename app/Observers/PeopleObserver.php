@@ -12,7 +12,6 @@ final readonly class PeopleObserver
     {
         if (auth('web')->check()) {
             $people->creator_id = auth('web')->id();
-            $people->team_id = auth('web')->user()->currentTeam->getKey();
         }
     }
 

@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Relaticle\SystemAdmin\Policies;
 
-use Relaticle\SystemAdmin\Enums\SystemAdministratorRole;
-use Relaticle\SystemAdmin\Models\SystemAdministrator;
+use App\Models\User;
 
 final class TeamPolicy
 {
@@ -21,43 +20,43 @@ final class TeamPolicy
         // System admins can view any team
     }
 
-    public function create(SystemAdministrator $admin): bool
+    public function create(User $user): bool
     {
-        return $admin->role === SystemAdministratorRole::SuperAdministrator;
+        return $user->is_system_admin;
     }
 
-    public function update(SystemAdministrator $admin): bool
+    public function update(User $user): bool
     {
-        return $admin->role === SystemAdministratorRole::SuperAdministrator;
+        return $user->is_system_admin;
     }
 
-    public function delete(SystemAdministrator $admin): bool
+    public function delete(User $user): bool
     {
-        return $admin->role === SystemAdministratorRole::SuperAdministrator;
+        return $user->is_system_admin;
     }
 
-    public function deleteAny(SystemAdministrator $admin): bool
+    public function deleteAny(User $user): bool
     {
-        return $admin->role === SystemAdministratorRole::SuperAdministrator;
+        return $user->is_system_admin;
     }
 
-    public function restore(SystemAdministrator $admin): bool
+    public function restore(User $user): bool
     {
-        return $admin->role === SystemAdministratorRole::SuperAdministrator;
+        return $user->is_system_admin;
     }
 
-    public function forceDelete(SystemAdministrator $admin): bool
+    public function forceDelete(User $user): bool
     {
-        return $admin->role === SystemAdministratorRole::SuperAdministrator;
+        return $user->is_system_admin;
     }
 
-    public function forceDeleteAny(SystemAdministrator $admin): bool
+    public function forceDeleteAny(User $user): bool
     {
-        return $admin->role === SystemAdministratorRole::SuperAdministrator;
+        return $user->is_system_admin;
     }
 
-    public function restoreAny(SystemAdministrator $admin): bool
+    public function restoreAny(User $user): bool
     {
-        return $admin->role === SystemAdministratorRole::SuperAdministrator;
+        return $user->is_system_admin;
     }
 }

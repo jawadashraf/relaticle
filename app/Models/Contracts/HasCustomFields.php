@@ -15,5 +15,5 @@ interface HasCustomFields
 
     public function saveCustomFieldValue(CustomField $field, mixed $value): void;
 
-    public function saveCustomFields(array $values, mixed $tenant = null): void;
+    public function saveCustomFields(array $values): void;
 }

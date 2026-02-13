@@ -5,14 +5,15 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use App\Models\Company;
+use App\Models\CustomField;
 use App\Models\Opportunity;
 use App\Models\People;
+use App\Models\Team;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Auth;
-use App\Models\CustomField;
 
 final class LocalSeeder extends Seeder
 {
@@ -24,61 +25,91 @@ final class LocalSeeder extends Seeder
             return;
         }
 
-        $this->call(SystemAdministratorSeeder::class);
-
-        $user = User::factory()
-            ->withPersonalTeam()
-            ->create([
+        $user = User::firstOrCreate(
+            ['email' => 'manuk.minasyan1@gmail.com'],
+            [
                 'name' => 'Manuk Minasyan',
-                'email' => 'manuk.minasyan1@gmail.com',
-            ]);
+                'password' => bcrypt('password'),
+                'email_verified_at' => now(),
+            ]
+        );
 
-        $teamId = $user->personalTeam()->id;
+        $this->call([
+            SystemAdministratorSeeder::class,
+            TeamSeeder::class,
+        ]);
 
-        // Create 10 Test Users
-        User::factory()
-            ->count(10)
-            ->create()
-            ->after(function (User $user) use ($teamId): void {
-                // Assign the user to the personal team.
-                $user->teams()->attach($teamId, [
-                    'role' => 'member',
-                ]);
-            });
-        //
-        //        // Set the current user and tenant.
-        //        Auth::setUser($user);
-        //        Filament::setTenant($user->personalTeam());
-        //
-        //        $customFields = CustomField::query()
-        //            ->whereIn('code', ['icp', 'stage', 'domain_name'])
-        //            ->get()
-        //            ->keyBy('code');
-        //
-        //        Company::factory()
-        //            ->for($user->personalTeam(), 'team')
-        //            ->count(50)
-        //            ->afterCreating(function (Company $company) use ($customFields): void {
-        //                $company->saveCustomFieldValue($customFields->get('domain_name'), 'https://'.fake()->domainName());
-        //                $company->saveCustomFieldValue($customFields->get('icp'), fake()->boolean(70));
-        //            })
-        //            ->create();
-        //
-        //        // Create people.
-        //        People::factory()
-        //            ->for($user->personalTeam(), 'team')
-        //            ->for($user->currentTeam->companies->random(), 'company')
-        //            ->state(new Sequence(
-        //                fn (Sequence $sequence): array => ['company_id' => $user->personalTeam()->companies->random()->id]
-        //            ))
-        //            ->count(500)->create();
-        //
-        //        // Create opportunities.
-        //        Opportunity::factory()->for($user->personalTeam(), 'team')
-        //            ->count(150)
-        //            ->afterCreating(function (Opportunity $opportunity) use ($customFields): void {
-        //                $opportunity->saveCustomFieldValue($customFields->get('stage'), $customFields->get('stage')->options->random()->id);
-        //            })
-        //            ->create();
+        if ($user->wasRecentlyCreated && ! $user->currentTeam) {
+            $managementTeam = Team::where('name', 'Management')->first();
+            if ($managementTeam) {
+                $user->teams()->attach($managementTeam, ['role' => 'admin']);
+                $user->switchTeam($managementTeam);
+            }
+        }
+
+        $teamId = $user->currentTeam?->id;
+
+        if ($teamId) {
+            // Create 10 Test Users
+            User::factory()
+                ->count(10)
+                ->create()
+                ->after(function (User $user) use ($teamId): void {
+                    // Assign the user to the personal team.
+                    $user->teams()->attach($teamId, [
+                        'role' => 'member',
+                    ]);
+                });
+        }
+        if ($user->currentTeam) {
+            // Set the current user and tenant context for any observers or logic that depends on it.
+            Auth::setUser($user);
+            Filament::setTenant($user->currentTeam);
+
+            $customFields = CustomField::query()
+                ->whereIn('code', ['icp', 'stage', 'domain_name'])
+                ->get()
+                ->keyBy('code');
+
+            // Create companies.
+            Company::factory()
+                ->for($user->currentTeam, 'team')
+                ->count(50)
+                ->afterCreating(function (Company $company) use ($customFields): void {
+                    if ($field = $customFields->get('domain_name')) {
+                        $company->saveCustomFieldValue($field, 'https://'.fake()->domainName());
+                    }
+                    if ($field = $customFields->get('icp')) {
+                        $company->saveCustomFieldValue($field, fake()->boolean(70));
+                    }
+                })
+                ->create();
+
+            // Create people.
+            People::factory()
+                ->for($user->currentTeam, 'team')
+                ->count(500)
+                ->afterCreating(function (People $person) use ($user): void {
+                    $company = $user->currentTeam->companies()->inRandomOrder()->first();
+                    if ($company) {
+                        $person->update(['company_id' => $company->id]);
+                    }
+                })
+                ->create();
+
+            // Create opportunities.
+            Opportunity::factory()
+                ->for($user->currentTeam, 'team')
+                ->count(150)
+                ->afterCreating(function (Opportunity $opportunity) use ($customFields): void {
+                    if ($field = $customFields->get('stage')) {
+                        $option = $field->options()->inRandomOrder()->first();
+                        if ($option) {
+                            $opportunity->saveCustomFieldValue($field, $option->id);
+                        }
+                    }
+                })
+                ->create();
+        }
     }
 }

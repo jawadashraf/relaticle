@@ -12,7 +12,6 @@ final readonly class TaskObserver
     {
         if (auth('web')->check()) {
             $task->creator_id = auth('web')->id();
-            $task->team_id = auth('web')->user()->currentTeam->getKey();
         }
     }
 

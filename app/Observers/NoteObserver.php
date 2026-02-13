@@ -15,7 +15,6 @@ final readonly class NoteObserver
             /** @var User $user */
             $user = auth()->user();
             $note->creator_id = $user->getKey();
-            $note->team_id = $user->currentTeam->getKey();
         }
     }
 

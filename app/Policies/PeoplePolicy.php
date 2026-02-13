@@ -30,12 +30,12 @@ final readonly class PeoplePolicy
 
     public function update(User $user, People $people): bool
     {
-        return $user->belongsToTeam($people->team);
+        return true;
     }
 
     public function delete(User $user, People $people): bool
     {
-        return $user->belongsToTeam($people->team);
+        return $user->is_system_admin;
     }
 
     public function deleteAny(User $user): bool
@@ -45,7 +45,7 @@ final readonly class PeoplePolicy
 
     public function restore(User $user, People $people): bool
     {
-        return $user->belongsToTeam($people->team);
+        return $user->is_system_admin;
     }
 
     public function restoreAny(User $user): bool
@@ -55,11 +55,11 @@ final readonly class PeoplePolicy
 
     public function forceDelete(User $user, People $people): bool
     {
-        return $user->currentTeam && $user->hasTeamRole($user->currentTeam, 'admin');
+        return $user->is_system_admin;
     }
 
     public function forceDeleteAny(User $user): bool
     {
-        return $user->currentTeam && $user->hasTeamRole($user->currentTeam, 'admin');
+        return $user->is_system_admin;
     }
 }

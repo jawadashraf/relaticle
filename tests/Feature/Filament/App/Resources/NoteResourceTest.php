@@ -11,7 +11,7 @@ use function Pest\Livewire\livewire;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->user = User::factory()->withPersonalTeam()->create();
+    $this->user = User::factory()->create();
     $this->actingAs($this->user);
 });
 

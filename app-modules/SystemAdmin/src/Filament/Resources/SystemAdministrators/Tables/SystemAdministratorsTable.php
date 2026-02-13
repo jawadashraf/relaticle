@@ -10,10 +10,8 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
-use Relaticle\SystemAdmin\Enums\SystemAdministratorRole;
 
 final class SystemAdministratorsTable
 {
@@ -31,12 +29,11 @@ final class SystemAdministratorsTable
                     ->sortable()
                     ->copyable(),
 
-                TextColumn::make('role')
+                TextColumn::make('system_admin_label')
+                    ->label('Role')
                     ->badge()
-                    ->formatStateUsing(fn (SystemAdministratorRole $state): string => $state->getLabel())
-                    ->color(fn (SystemAdministratorRole $state): string => match ($state) {
-                        SystemAdministratorRole::SuperAdministrator => 'danger',
-                    }),
+                    ->default('Super Administrator')
+                    ->color('danger'),
 
                 IconColumn::make('email_verified_at')
                     ->label('Verified')
@@ -55,13 +52,6 @@ final class SystemAdministratorsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                SelectFilter::make('role')
-                    ->options(
-                        collect(SystemAdministratorRole::cases())
-                            ->mapWithKeys(fn (SystemAdministratorRole $role): array => [
-                                $role->value => $role->getLabel(),
-                            ])
-                    ),
 
                 TernaryFilter::make('email_verified_at')
                     ->label('Email Verified')

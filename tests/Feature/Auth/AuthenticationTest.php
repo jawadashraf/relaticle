@@ -17,10 +17,7 @@ test('users can authenticate using the login screen', function () {
     $user = User::factory()->withPersonalTeam()->create();
 
     livewire(Login::class)
-        ->fillForm([
-            'email' => $user->email,
-            'password' => 'password',
-        ])
+        ->fill(['data.email' => $user->email, 'data.password' => 'password'])
         ->call('authenticate')
         ->assertRedirect(url()->getAppUrl('1/companies'));
 

@@ -4,60 +4,65 @@ declare(strict_types=1);
 
 namespace Relaticle\SystemAdmin\Policies;
 
-use Relaticle\SystemAdmin\Enums\SystemAdministratorRole;
-use Relaticle\SystemAdmin\Models\SystemAdministrator;
+use App\Models\User;
 
 final class UserPolicy
 {
-    public function viewAny(): bool
+    public function viewAny(User $user): bool
     {
-        return true;
-        // System admins can view all users across all tenants
+        return $user->is_system_admin;
     }
 
-    public function view(): bool
+    public function view(User $user, User $model): bool
     {
-        return true;
-        // System admins can view any user
+        return $user->is_system_admin;
     }
 
-    public function create(SystemAdministrator $admin): bool
+    public function create(User $user): bool
     {
-        return $admin->role === SystemAdministratorRole::SuperAdministrator;
+        return $user->is_system_admin;
     }
 
-    public function update(SystemAdministrator $admin): bool
+    public function update(User $user, User $model): bool
     {
-        return $admin->role === SystemAdministratorRole::SuperAdministrator;
+        return $user->is_system_admin;
     }
 
-    public function delete(SystemAdministrator $admin): bool
+    public function delete(User $user, User $model): bool
     {
-        return $admin->role === SystemAdministratorRole::SuperAdministrator;
+        if ($user->id === $model->id) {
+            return false;
+        }
+
+        return $user->is_system_admin;
     }
 
-    public function deleteAny(SystemAdministrator $admin): bool
+    public function deleteAny(User $user): bool
     {
-        return $admin->role === SystemAdministratorRole::SuperAdministrator;
+        return $user->is_system_admin;
     }
 
-    public function restore(SystemAdministrator $admin): bool
+    public function restore(User $user, User $model): bool
     {
-        return $admin->role === SystemAdministratorRole::SuperAdministrator;
+        return $user->is_system_admin;
     }
 
-    public function forceDelete(SystemAdministrator $admin): bool
+    public function forceDelete(User $user, User $model): bool
     {
-        return $admin->role === SystemAdministratorRole::SuperAdministrator;
+        if ($user->id === $model->id) {
+            return false;
+        }
+
+        return $user->is_system_admin;
     }
 
-    public function forceDeleteAny(SystemAdministrator $admin): bool
+    public function forceDeleteAny(User $user): bool
     {
-        return $admin->role === SystemAdministratorRole::SuperAdministrator;
+        return $user->is_system_admin;
     }
 
-    public function restoreAny(SystemAdministrator $admin): bool
+    public function restoreAny(User $user): bool
     {
-        return $admin->role === SystemAdministratorRole::SuperAdministrator;
+        return $user->is_system_admin;
     }
 }

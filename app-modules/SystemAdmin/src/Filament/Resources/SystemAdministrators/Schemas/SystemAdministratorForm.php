@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace Relaticle\SystemAdmin\Filament\Resources\SystemAdministrators\Schemas;
 
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Hash;
-use Relaticle\SystemAdmin\Enums\SystemAdministratorRole;
 
 final class SystemAdministratorForm
 {
@@ -32,15 +31,8 @@ final class SystemAdministratorForm
                             ->maxLength(255)
                             ->unique(ignoreRecord: true),
 
-                        Select::make('role')
-                            ->options(
-                                collect(SystemAdministratorRole::cases())
-                                    ->mapWithKeys(fn (SystemAdministratorRole $role): array => [
-                                        $role->value => $role->getLabel(),
-                                    ])
-                            )
-                            ->default(SystemAdministratorRole::SuperAdministrator->value)
-                            ->required(),
+                        Hidden::make('is_system_admin')
+                            ->default(true),
 
                         DateTimePicker::make('email_verified_at')
                             ->label('Email Verified At')

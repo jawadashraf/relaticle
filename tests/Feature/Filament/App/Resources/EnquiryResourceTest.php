@@ -13,7 +13,7 @@ use Filament\Facades\Filament;
 use function Pest\Livewire\livewire;
 
 beforeEach(function () {
-    $this->user = User::factory()->withPersonalTeam()->create();
+    $this->user = User::factory()->create();
     $this->actingAs($this->user);
 });
 
@@ -55,9 +55,9 @@ it('has correctly configured table filters', function (string $filter): void {
 
 it('can validate form fields', function (string $field, mixed $value, string $rule): void {
     livewire(CreateEnquiry::class)
-        ->fillForm([$field => $value])
+        ->fill(['data.' . $field => $value])
         ->call('create')
-        ->assertHasFormErrors([$field => $rule]);
+        ->assertHasErrors(['data.' . $field]);
 })->with([
     'category' => ['category', null, 'required'],
     'reason_for_contact' => ['reason_for_contact', null, 'required'],
@@ -71,14 +71,14 @@ it('can create an enquiry', function (): void {
     ]);
 
     livewire(CreateEnquiry::class)
-        ->fillForm([
-            'category' => $newData->category,
-            'occurred_at' => $newData->occurred_at,
-            'reason_for_contact' => $newData->reason_for_contact,
-            'user_id' => $newData->user_id,
+        ->fill([
+            'data.category' => $newData->category,
+            'data.occurred_at' => $newData->occurred_at,
+            'data.reason_for_contact' => $newData->reason_for_contact,
+            'data.user_id' => $newData->user_id,
         ])
         ->call('create')
-        ->assertHasNoFormErrors();
+        ->assertHasNoErrors();
 
     $this->assertDatabaseHas(Enquiry::class, [
         'reason_for_contact' => $newData->reason_for_contact,

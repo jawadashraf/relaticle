@@ -9,7 +9,7 @@ use Filament\Facades\Filament;
 use function Pest\Livewire\livewire;
 
 beforeEach(function () {
-    $this->user = User::factory()->withPersonalTeam()->create();
+    $this->user = User::factory()->create();
     $this->actingAs($this->user);
 });
 

@@ -18,7 +18,11 @@ final class SystemAdministratorInfolist
                     ->label('Email address'),
                 TextEntry::make('email_verified_at')
                     ->dateTime(),
-                TextEntry::make('role'),
+                TextEntry::make('is_system_admin')
+                    ->label('Is System Admin')
+                    ->badge()
+                    ->color('danger')
+                    ->formatStateUsing(fn (): string => 'Super Administrator'),
                 TextEntry::make('created_at')
                     ->dateTime(),
                 TextEntry::make('updated_at')

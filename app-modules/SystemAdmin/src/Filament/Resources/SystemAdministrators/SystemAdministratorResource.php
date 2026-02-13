@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Relaticle\SystemAdmin\Filament\Resources\SystemAdministrators;
 
+use App\Models\User;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -17,12 +18,11 @@ use Relaticle\SystemAdmin\Filament\Resources\SystemAdministrators\Pages\ViewSyst
 use Relaticle\SystemAdmin\Filament\Resources\SystemAdministrators\Schemas\SystemAdministratorForm;
 use Relaticle\SystemAdmin\Filament\Resources\SystemAdministrators\Schemas\SystemAdministratorInfolist;
 use Relaticle\SystemAdmin\Filament\Resources\SystemAdministrators\Tables\SystemAdministratorsTable;
-use Relaticle\SystemAdmin\Models\SystemAdministrator;
 use UnitEnum;
 
 final class SystemAdministratorResource extends Resource
 {
-    protected static ?string $model = SystemAdministrator::class;
+    protected static ?string $model = User::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShieldCheck;
 
@@ -65,6 +65,7 @@ final class SystemAdministratorResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
+            ->where('is_system_admin', true)
             ->withoutGlobalScopes();
     }
 }

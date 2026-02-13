@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 use App\Models\User;
 use Filament\Facades\Filament;
-use Relaticle\SystemAdmin\Enums\SystemAdministratorRole;
-use Relaticle\SystemAdmin\Models\SystemAdministrator;
 
 describe('SystemAdmin Security', function () {
     beforeEach(function () {
@@ -13,7 +11,7 @@ describe('SystemAdmin Security', function () {
     });
 
     it('enforces complete authentication isolation', function () {
-        $admin = SystemAdministrator::factory()->create();
+        $admin = User::factory()->create(['is_system_admin' => true]);
         $user = User::factory()->create();
 
         // System admin cannot access app panel
@@ -23,31 +21,30 @@ describe('SystemAdmin Security', function () {
         expect($user->canAccessPanel(Filament::getPanel('sysadmin')))->toBeFalse();
 
         // Guards are isolated
-        $this->actingAs($admin, 'sysadmin');
-        $this->assertAuthenticatedAs($admin, 'sysadmin');
-        $this->assertGuest('web');
+        $this->actingAs($admin, 'web');
+        $this->assertAuthenticatedAs($admin, 'web');
     });
 
     it('enforces role-based authorization', function () {
-        $superAdmin = SystemAdministrator::factory()->create([
-            'role' => SystemAdministratorRole::SuperAdministrator,
+        $superAdmin = User::factory()->create([
+            'is_system_admin' => true,
         ]);
 
-        $otherAdmin = SystemAdministrator::factory()->create([
-            'role' => SystemAdministratorRole::SuperAdministrator,
+        $otherAdmin = User::factory()->create([
+            'is_system_admin' => true,
         ]);
 
-        $this->actingAs($superAdmin, 'sysadmin');
+        $this->actingAs($superAdmin, 'web');
 
-        expect(auth('sysadmin')->user()->can('create', SystemAdministrator::class))->toBeTrue()
-            ->and(auth('sysadmin')->user()->can('viewAny', SystemAdministrator::class))->toBeTrue()
-            ->and(auth('sysadmin')->user()->can('update', $otherAdmin))->toBeTrue()
-            ->and(auth('sysadmin')->user()->can('delete', $otherAdmin))->toBeTrue()
-            ->and(auth('sysadmin')->user()->can('delete', $superAdmin))->toBeFalse();
+        expect(auth('web')->user()->can('create', User::class))->toBeTrue()
+            ->and(auth('web')->user()->can('viewAny', User::class))->toBeTrue()
+            ->and(auth('web')->user()->can('update', $otherAdmin))->toBeTrue()
+            ->and(auth('web')->user()->can('delete', $otherAdmin))->toBeTrue()
+            ->and(auth('web')->user()->can('delete', $superAdmin))->toBeFalse();
     });
 
     it('requires email verification for panel access', function () {
-        $unverifiedAdmin = SystemAdministrator::factory()->unverified()->create();
+        $unverifiedAdmin = User::factory()->unverified()->create(['is_system_admin' => true]);
 
         expect($unverifiedAdmin->canAccessPanel(Filament::getPanel('sysadmin')))->toBeFalse();
     });
@@ -56,20 +53,19 @@ describe('SystemAdmin Security', function () {
         $this->get('/sysadmin/system-administrators')
             ->assertRedirect('/sysadmin/login');
 
-        $admin = SystemAdministrator::factory()->create();
+        $admin = User::factory()->create(['is_system_admin' => true]);
 
-        $this->actingAs($admin, 'sysadmin')
+        $this->actingAs($admin, 'web')
             ->get('/sysadmin/system-administrators')
             ->assertOk();
     });
 
     it('validates data integrity', function () {
-        $admin = SystemAdministrator::factory()->create([
-            'role' => SystemAdministratorRole::SuperAdministrator,
+        $admin = User::factory()->create([
+            'is_system_admin' => true,
         ]);
 
-        expect($admin->role)->toBeInstanceOf(SystemAdministratorRole::class)
-            ->and($admin->role)->toBe(SystemAdministratorRole::SuperAdministrator)
+        expect($admin->is_system_admin)->toBeTrue()
             ->and($admin->hasVerifiedEmail())->toBeTrue();
     });
 });

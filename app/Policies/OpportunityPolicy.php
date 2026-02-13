@@ -30,12 +30,12 @@ final readonly class OpportunityPolicy
 
     public function update(User $user, Opportunity $opportunity): bool
     {
-        return $user->belongsToTeam($opportunity->team);
+        return true;
     }
 
     public function delete(User $user, Opportunity $opportunity): bool
     {
-        return $user->belongsToTeam($opportunity->team);
+        return $user->is_system_admin;
     }
 
     public function deleteAny(User $user): bool
@@ -45,7 +45,7 @@ final readonly class OpportunityPolicy
 
     public function restore(User $user, Opportunity $opportunity): bool
     {
-        return $user->belongsToTeam($opportunity->team);
+        return $user->is_system_admin;
     }
 
     public function restoreAny(User $user): bool
@@ -55,11 +55,11 @@ final readonly class OpportunityPolicy
 
     public function forceDelete(User $user, Opportunity $opportunity): bool
     {
-        return $user->currentTeam && $user->hasTeamRole($user->currentTeam, 'admin');
+        return $user->is_system_admin;
     }
 
     public function forceDeleteAny(User $user): bool
     {
-        return $user->currentTeam && $user->hasTeamRole($user->currentTeam, 'admin');
+        return $user->is_system_admin;
     }
 }

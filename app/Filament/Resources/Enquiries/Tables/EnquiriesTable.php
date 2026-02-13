@@ -62,7 +62,7 @@ final class EnquiriesTable
                 SelectFilter::make('status')
                     ->options(EnquiryStatus::class),
             ])
-            ->recordActions([
+            ->actions([
                 ViewAction::make(),
                 EditAction::make(),
                 ConvertToServiceUserAction::make(),

@@ -30,12 +30,12 @@ final readonly class TaskPolicy
 
     public function update(User $user, Task $task): bool
     {
-        return $user->belongsToTeam($task->team);
+        return true;
     }
 
     public function delete(User $user, Task $task): bool
     {
-        return $user->belongsToTeam($task->team);
+        return $user->is_system_admin;
     }
 
     public function deleteAny(User $user): bool
@@ -45,7 +45,7 @@ final readonly class TaskPolicy
 
     public function restore(User $user, Task $task): bool
     {
-        return $user->belongsToTeam($task->team);
+        return $user->is_system_admin;
     }
 
     public function restoreAny(User $user): bool
@@ -55,11 +55,11 @@ final readonly class TaskPolicy
 
     public function forceDelete(User $user, Task $task): bool
     {
-        return $user->currentTeam && $user->hasTeamRole($user->currentTeam, 'admin');
+        return $user->is_system_admin;
     }
 
     public function forceDeleteAny(User $user): bool
     {
-        return $user->currentTeam && $user->hasTeamRole($user->currentTeam, 'admin');
+        return $user->is_system_admin;
     }
 }

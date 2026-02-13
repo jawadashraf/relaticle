@@ -18,10 +18,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Collection;
 
 /**
  * @property string $name
@@ -55,6 +55,7 @@ final class User extends Authenticatable implements FilamentUser, HasAvatar, Mus
         'name',
         'email',
         'password',
+        'is_system_admin',
     ];
 
     /**
@@ -88,6 +89,7 @@ final class User extends Authenticatable implements FilamentUser, HasAvatar, Mus
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_system_admin' => 'boolean',
         ];
     }
 
@@ -120,6 +122,14 @@ final class User extends Authenticatable implements FilamentUser, HasAvatar, Mus
      */
     public function canAccessPanel(Panel $panel): bool
     {
-        return $panel->getId() === 'app';
+        if ($panel->getId() === 'sysadmin') {
+            return $this->is_system_admin && $this->hasVerifiedEmail();
+        }
+
+        if ($panel->getId() === 'app') {
+            return ! $this->is_system_admin;
+        }
+
+        return false;
     }
 }

@@ -7,15 +7,10 @@ namespace App\Providers\Filament;
 use App\Filament\Pages\ApiTokens;
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\Register;
-use App\Filament\Pages\CreateTeam;
 use App\Filament\Pages\EditProfile;
-use App\Filament\Pages\EditTeam;
 use App\Filament\Resources\CompanyResource;
-use App\Listeners\SwitchTeam;
-use App\Models\Team;
 use Exception;
 use Filament\Actions\Action;
-use Filament\Events\TenantSet;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -49,14 +44,6 @@ final class AppPanelProvider extends PanelProvider
      */
     public function boot(): void
     {
-        /**
-         * Listen and switch team if tenant was changed
-         */
-        Event::listen(
-            TenantSet::class,
-            SwitchTeam::class,
-        );
-
         Action::configureUsing(fn (Action $action): Action => $action->size(Size::Small)->iconPosition('before'));
         Section::configureUsing(fn (Section $section): Section => $section->compact());
         Table::configureUsing(fn (Table $table): Table => $table);
@@ -73,7 +60,7 @@ final class AppPanelProvider extends PanelProvider
             ->default()
             ->id('app')
             ->domain('app.'.parse_url((string) config('app.url'))['host'])
-            ->homeUrl(fn (): string => CompanyResource::getUrl())
+            ->homeUrl(fn (): string => CompanyResource::getUrl('index'))
             ->brandName('Relaticle')
             ->login(Login::class)
             ->registration(Register::class)
@@ -110,7 +97,7 @@ final class AppPanelProvider extends PanelProvider
                     ->label('Profile')
                     ->icon('heroicon-m-user-circle')
                     ->url(fn (): string => $this->shouldRegisterMenuItem()
-                        ? url(EditProfile::getUrl())
+                        ? EditProfile::getUrl()
                         : url($panel->getPath())),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\Resources')
@@ -169,11 +156,10 @@ final class AppPanelProvider extends PanelProvider
                     ->label('API Tokens')
                     ->icon('heroicon-o-key')
                     ->url(fn (): string => $this->shouldRegisterMenuItem()
-                        ? url(ApiTokens::getUrl())
+                        ? ApiTokens::getUrl()
                         : url($panel->getPath())),
             ]);
         }
-
 
         return $panel;
     }

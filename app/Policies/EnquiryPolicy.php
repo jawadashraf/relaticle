@@ -22,14 +22,7 @@ final class EnquiryPolicy
      */
     public function view(User $user, Enquiry $enquiry): bool
     {
-        if ($user->id === $enquiry->user_id) {
-            return true;
-        }
-        if ($user->hasTeamRole($user->currentTeam, 'admin')) {
-            return true;
-        }
-
-        return $user->hasTeamRole($user->currentTeam, 'safeguarding-lead');
+        return true;
     }
 
     /**
@@ -45,14 +38,7 @@ final class EnquiryPolicy
      */
     public function update(User $user, Enquiry $enquiry): bool
     {
-        if ($user->id === $enquiry->user_id) {
-            return true;
-        }
-        if ($user->hasTeamRole($user->currentTeam, 'admin')) {
-            return true;
-        }
-
-        return $user->hasTeamRole($user->currentTeam, 'safeguarding-lead');
+        return $user->id === $enquiry->user_id || $user->is_system_admin;
     }
 
     /**
@@ -60,11 +46,7 @@ final class EnquiryPolicy
      */
     public function delete(User $user): bool
     {
-        if ($user->hasTeamRole($user->currentTeam, 'admin')) {
-            return true;
-        }
-
-        return $user->hasTeamRole($user->currentTeam, 'safeguarding-lead');
+        return $user->is_system_admin;
     }
 
     /**
@@ -72,11 +54,7 @@ final class EnquiryPolicy
      */
     public function deleteAny(User $user): bool
     {
-        if ($user->hasTeamRole($user->currentTeam, 'admin')) {
-            return true;
-        }
-
-        return $user->hasTeamRole($user->currentTeam, 'safeguarding-lead');
+        return $user->is_system_admin;
     }
 
     /**
@@ -84,11 +62,7 @@ final class EnquiryPolicy
      */
     public function restore(User $user): bool
     {
-        if ($user->hasTeamRole($user->currentTeam, 'admin')) {
-            return true;
-        }
-
-        return $user->hasTeamRole($user->currentTeam, 'safeguarding-lead');
+        return $user->is_system_admin;
     }
 
     /**
@@ -96,11 +70,7 @@ final class EnquiryPolicy
      */
     public function restoreAny(User $user): bool
     {
-        if ($user->hasTeamRole($user->currentTeam, 'admin')) {
-            return true;
-        }
-
-        return $user->hasTeamRole($user->currentTeam, 'safeguarding-lead');
+        return $user->is_system_admin;
     }
 
     /**
@@ -108,11 +78,7 @@ final class EnquiryPolicy
      */
     public function forceDelete(User $user): bool
     {
-        if ($user->hasTeamRole($user->currentTeam, 'admin')) {
-            return true;
-        }
-
-        return $user->hasTeamRole($user->currentTeam, 'safeguarding-lead');
+        return $user->is_system_admin;
     }
 
     /**
@@ -120,11 +86,7 @@ final class EnquiryPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        if ($user->hasTeamRole($user->currentTeam, 'admin')) {
-            return true;
-        }
-
-        return $user->hasTeamRole($user->currentTeam, 'safeguarding-lead');
+        return $user->is_system_admin;
     }
 
     /**

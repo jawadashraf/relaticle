@@ -32,7 +32,7 @@ trait HasCustomFields
         return $valueRecord?->{$valueColumn};
     }
 
-    public function saveCustomFields(array $values, mixed $tenant = null): void
+    public function saveCustomFields(array $values): void
     {
         foreach ($values as $code => $value) {
             $field = CustomField::query()
@@ -56,7 +56,6 @@ trait HasCustomFields
         $this->customFieldValues()->updateOrCreate(
             [
                 'custom_field_id' => $field->id,
-                'team_id' => $this->team_id ?? null,
             ],
             [
                 $valueColumn => $value,

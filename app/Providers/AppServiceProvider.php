@@ -22,7 +22,6 @@ use Illuminate\Support\Facades;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\View;
-use Relaticle\SystemAdmin\Models\SystemAdministrator;
 
 final class AppServiceProvider extends ServiceProvider
 {
@@ -123,7 +122,6 @@ final class AppServiceProvider extends ServiceProvider
             'opportunity' => Opportunity::class,
             'task' => Task::class,
             'note' => Note::class,
-            'system_administrator' => SystemAdministrator::class,
             'import' => Import::class,
         ]);
 

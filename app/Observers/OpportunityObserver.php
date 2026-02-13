@@ -12,7 +12,6 @@ final readonly class OpportunityObserver
     {
         if (auth('web')->check()) {
             $opportunity->creator_id = auth('web')->id();
-            $opportunity->team_id = auth('web')->user()->currentTeam->getKey();
         }
     }
 

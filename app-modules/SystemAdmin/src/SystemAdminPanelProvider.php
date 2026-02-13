@@ -42,8 +42,7 @@ final class SystemAdminPanelProvider extends PanelProvider
         return $panel
             ->login()
             ->emailVerification()
-            ->authGuard('sysadmin')
-            ->authPasswordBroker('system_administrators')
+            ->authGuard('web')
             ->strictAuthorization()
             ->spa()
             ->colors([
