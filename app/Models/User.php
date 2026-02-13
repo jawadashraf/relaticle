@@ -119,6 +119,22 @@ final class User extends Authenticatable implements FilamentUser, HasAvatar, Mus
     }
 
     /**
+     * Determine if this user can impersonate other users.
+     */
+    public function canImpersonate(): bool
+    {
+        return $this->hasRole('super_admin');
+    }
+
+    /**
+     * Determine if this user can be impersonated.
+     */
+    public function canBeImpersonated(): bool
+    {
+        return ! $this->hasRole('super_admin');
+    }
+
+    /**
      * @throws Exception
      */
     public function canAccessPanel(Panel $panel): bool
