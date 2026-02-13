@@ -6,7 +6,7 @@ Scope: Phase 1 MVP only
 
 **Project Context**
 Goal: deliver a secure, role-based CRM that centralizes enquiries, case files, appointments, collaboration, aftercare, directories, safeguarding, and baseline reporting.
-Tech stack: Laravel 12, Filament 4, Livewire 3, Pest 4, PHP 8.4.
+Tech stack: Laravel 12, Filament 4, Livewire 3, Filament Shield (Spatie Permissions), Pest 4, Tailwind CSS 4, PHP 8.4.
 Tenancy model: team-based, enforced via global scopes.
 
 **Success Criteria**
@@ -163,7 +163,7 @@ Acceptance Criteria
 - Access to restricted notes is logged.
 
 **Permissions Matrix**
-Role definitions are Jetstream team roles. Add these roles in configuration.
+Role definitions are Spatie Permission roles managed via Filament Shield. Roles are seeded and permissions assigned through the Shield admin UI or programmatically.
 
 | Role | Access Summary |
 | --- | --- |
@@ -198,7 +198,7 @@ Role definitions are Jetstream team roles. Add these roles in configuration.
 - Create migrations and models for Enquiry, Appointment, EngagementLog, SafeguardingFlag, Donation, AuditLog.
 - Add custom fields to People and Note.
 - Add `visibility` to notes and policy logic for restricted notes.
-- Add new Jetstream roles and permissions mapping.
+- Seed Spatie roles via Filament Shield and assign granular permissions.
 - Add tenant scopes for new models.
 - Add factories and seeders for new models.
 - Tests: feature tests for role access and model validation.

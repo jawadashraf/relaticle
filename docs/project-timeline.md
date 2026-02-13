@@ -18,7 +18,7 @@ This timeline is structured into **6 focused weekly sprints**, delivering a full
 
 ### Week 1: Core Foundations
 *   Set up infrastructure and high-security tenancy model.
-*   Implement User Roles (Frontline, Assessment, Safeguarding, etc.).
+*   Implement User Roles via Filament Shield and Spatie Permissions (Frontline, Assessment, Safeguarding, etc.).
 *   Deploy Database Models: `Enquiry`, `Appointment`, `EngagementLog`, `SafeguardingFlag`, `Donation`.
 
 ### Week 2: Enquiry Management

@@ -54,5 +54,5 @@ Built on the industry-leading **Laravel 12** and **Filament 4** frameworks, the 
 ## 6. Technical Excellence
 *   **Framework:** Laravel 12 (Modern, Secure, High Performance).
 *   **Admin UI:** Filament 4 (Intuitive, Fast, Professional).
-*   **Security:** Multi-tenant architecture with strict role-based access control (RBAC).
+*   **Security:** Multi-tenant architecture with strict role-based access control (RBAC) powered by Filament Shield and Spatie Permissions.
 *   **Sustainability:** Built with code quality (Pest 4 tests) to ensure long-term stability.
