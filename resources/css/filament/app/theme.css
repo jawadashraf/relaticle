@@ -6,6 +6,7 @@
 /* Custom Fields */
 @source '../../../../vendor/relaticle/flowforge/resources/views/**/*.blade.php';
 @source '../../../../vendor/relaticle/custom-fields/resources';
+@source '../../../../vendor/diogogpinto/filament-auth-ui-enhancer/resources';
 
 /* ===================================
    Relaticle Brand Theme Customization
@@ -21,7 +22,7 @@
     @apply flex-1 flex flex-col min-w-0;
 
     /* Only the content area scrolls, not the topbar */
-    > .fi-layout {
+    >.fi-layout {
         @apply flex-1 overflow-y-auto;
     }
 }
@@ -63,7 +64,7 @@
 }
 
 .fi-sidebar-item.fi-active {
-    > .fi-sidebar-item-btn {
+    >.fi-sidebar-item-btn {
         @apply bg-gray-100 dark:bg-gray-800 font-semibold;
     }
 }

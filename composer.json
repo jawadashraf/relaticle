@@ -19,6 +19,7 @@
         "bezhansalleh/filament-shield": "^4.1",
         "blade-ui-kit/blade-heroicons": "^2.6",
         "blade-ui-kit/blade-icons": "^1.8",
+        "diogogpinto/filament-auth-ui-enhancer": "^2.0",
         "filament/filament": "^4.0",
         "laravel/framework": "^12.0",
         "laravel/horizon": "^5.29",

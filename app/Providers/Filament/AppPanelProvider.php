@@ -36,6 +36,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Laravel\Jetstream\Features;
 use Openplain\FilamentShadcnTheme\Color;
+use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
 
 final class AppPanelProvider extends PanelProvider
 {
@@ -62,11 +63,17 @@ final class AppPanelProvider extends PanelProvider
             ->domain('app.'.parse_url((string) config('app.url'))['host'])
             ->homeUrl(fn (): string => CompanyResource::getUrl('index'))
             ->brandName('Spinneyhill')
-            ->plugin(FilamentShieldPlugin::make())
+            ->plugins([
+                FilamentShieldPlugin::make(),
+                AuthUIEnhancerPlugin::make()
+                ->showEmptyPanelOnMobile(false)
+            ->formPanelPosition('right')
+            ->formPanelWidth('40%')
+            ->emptyPanelBackgroundImageOpacity('70%')
+            ->emptyPanelBackgroundImageUrl('https://images.pexels.com/photos/466685/pexels-photo-466685.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')
+            ])
             ->login(Login::class)
             ->registration(Register::class)
-            // ->authGuard('web')
-            // ->authPasswordBroker('users')
             ->passwordReset()
             ->emailVerification()
             ->databaseNotifications()
@@ -137,14 +144,14 @@ final class AppPanelProvider extends PanelProvider
                 PanelsRenderHook::AUTH_LOGIN_FORM_BEFORE,
                 fn (): string => Blade::render('@env(\'local\')<x-login-link email="manuk.minasyan1@gmail.com" redirect-url="'.url('/').'" />@endenv'),
             )
-            ->renderHook(
-                PanelsRenderHook::AUTH_LOGIN_FORM_BEFORE,
-                fn (): View|Factory => view('filament.auth.social_login_buttons')
-            )
-            ->renderHook(
-                PanelsRenderHook::AUTH_REGISTER_FORM_BEFORE,
-                fn (): View|Factory => view('filament.auth.social_login_buttons')
-            )
+            // ->renderHook(
+            //     PanelsRenderHook::AUTH_LOGIN_FORM_BEFORE,
+            //     fn (): View|Factory => view('filament.auth.social_login_buttons')
+            // )
+            // ->renderHook(
+            //     PanelsRenderHook::AUTH_REGISTER_FORM_BEFORE,
+            //     fn (): View|Factory => view('filament.auth.social_login_buttons')
+            // )
             ->renderHook(
                 PanelsRenderHook::HEAD_END,
                 fn (): View|Factory => view('filament.app.analytics')
