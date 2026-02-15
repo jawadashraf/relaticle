@@ -22,33 +22,26 @@ use Laravel\Jetstream\Http\Controllers\TeamInvitationController;
 |
 */
 
-Route::middleware('guest')->group(function () {
-    Route::get('/auth/redirect/{provider}', RedirectController::class)
-        ->name('auth.socialite.redirect')
-        ->middleware('throttle:10,1');
-    Route::get('/auth/callback/{provider}', CallbackController::class)
-        ->name('auth.socialite.callback')
-        ->middleware('throttle:10,1');
+// Guest routes are handled by Filament/Fortify on the same domain.
+// We manually define the Filament route names that are expected by the app panel.
+// We use a different URI to avoid conflicts with existing routes while providing the names.
+Route::get('/filament/login', App\Filament\Pages\Auth\Login::class)->name('filament.app.auth.login');
+Route::post('/filament/login', [Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::class, 'store'])->name('filament.app.auth.login.store');
+Route::get('/filament/register', App\Filament\Pages\Auth\Register::class)->name('filament.app.auth.register');
+Route::post('/filament/register', [Laravel\Fortify\Http\Controllers\RegisteredUserController::class, 'store'])->name('filament.app.auth.register.store');
+Route::post('/filament/logout', [Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::class, 'destroy'])->name('filament.app.auth.logout');
 
-    Route::get('/login', function () {
-        return redirect()->away(url()->getAppUrl('login'));
-    })->name('login');
-
-    Route::get('/register', function () {
-        return redirect()->away(url()->getAppUrl('register'));
-    })->name('register');
-
-    Route::get('/forgot-password', function () {
-        return redirect()->away(url()->getAppUrl('forgot-password'));
-    })->name('password.request');
-});
+// Aliases for common route names used in blade views
+Route::get('/login', App\Filament\Pages\Auth\Login::class)->name('login');
+Route::get('/register', App\Filament\Pages\Auth\Register::class)->name('register');
+Route::get('/forgot-password', Filament\Auth\Pages\PasswordReset\RequestPasswordReset::class)->name('password.request');
 
 Route::get('/', HomeController::class);
 
 Route::get('/terms-of-service', TermsOfServiceController::class)->name('terms.show');
 Route::get('/privacy-policy', PrivacyPolicyController::class)->name('policy.show');
 
-Route::redirect('/dashboard', url()->getAppUrl())->name('dashboard');
+Route::redirect('/dashboard', '/')->name('dashboard');
 
 Route::get('/team-invitations/{invitation}', [TeamInvitationController::class, 'accept'])
     ->middleware(['signed', 'verified', 'auth', AuthenticateSession::class])

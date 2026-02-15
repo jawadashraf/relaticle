@@ -13,7 +13,7 @@
                 "/Applications/Herd.app/Contents/Resources/herd-mcp.phar"
             ],
             "env": {
-                "SITE_PATH": "/Users/jawadashraf/Herd/relaticle"
+                "SITE_PATH": "/Users/jawadashraf/Herd/spinney"
             }
         }
     }
